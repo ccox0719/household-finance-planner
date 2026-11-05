@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Household Finance Planner</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23173966%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2309111f%22/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%22ln%22%20x1%3D%220%22%20y1%3D%221%22%20x2%3D%221%22%20y2%3D%220%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%2354a8ff%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%234dd4a3%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%22112%22%20fill%3D%22url%28%23bg%29%22/%3E%3Cpath%20d%3D%22M96%20258%20256%20118l160%20140%22%20fill%3D%22none%22%20stroke%3D%22%23edf4ff%22%20stroke-width%3D%2230%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3Cpath%20d%3D%22M136%20240v156h240V240%22%20fill%3D%22none%22%20stroke%3D%22%23edf4ff%22%20stroke-width%3D%2230%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20opacity%3D%22.9%22/%3E%3Cpath%20d%3D%22M176%20352l58-62%2042%2038%2076-96%22%20fill%3D%22none%22%20stroke%3D%22url%28%23ln%29%22%20stroke-width%3D%2230%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%22352%22%20cy%3D%22232%22%20r%3D%2222%22%20fill%3D%22%234dd4a3%22/%3E%3C/svg%3E"><meta name="theme-color" content="#09111f">
+<style>
+:root{--bg:#09111f;--panel:#101c30;--panel2:#14243c;--line:#28405f;--text:#edf4ff;--muted:#9db0c8;--blue:#54a8ff;--green:#4dd4a3;--orange:#ffb55c;--red:#ff7892;--purple:#b78cff;--shadow:0 18px 50px #0005}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 85% -10%,#173966 0,transparent 34%),var(--bg);color:var(--text);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+.shell{max-width:1440px;margin:auto;padding:24px}.top{display:flex;gap:20px;align-items:flex-start;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:16px;flex-wrap:wrap}
+.eyebrow{letter-spacing:.12em;text-transform:uppercase;color:var(--blue);font-size:11px;font-weight:700}h1{font-size:28px;line-height:1.15;margin:5px 0 6px}h2{font-size:16px;margin:0 0 14px}h3{font-size:13px;color:var(--muted);margin:0 0 8px;font-weight:600}
+.sub{margin:0;color:var(--muted);max-width:760px}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:8px 12px;border-radius:8px;font:inherit;font-weight:650;font-size:13px;cursor:pointer}.btn:hover{background:var(--panel2)}.btn.primary{background:var(--blue);color:#061425;border-color:var(--blue)}.btn.danger{border-color:#7a3347;color:var(--red)}
+.tabs{display:flex;gap:4px;margin:16px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}.tab{background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:10px 14px;font:inherit;font-weight:650;cursor:pointer}.tab[aria-selected=true]{color:var(--text);border-color:var(--blue)}
+.notice{margin:12px 0;background:#142945;border-left:3px solid var(--blue);padding:10px 14px;border-radius:5px;color:#dce9fa;font-size:13px}.notice.bad{border-color:var(--red)}.notice.good{border-color:var(--green)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}.card,.panel{background:linear-gradient(145deg,#122039,#0e1a2e);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:12px;min-width:0}.card{padding:14px}
+.kpi-label{font-size:12px;color:var(--muted);min-height:34px}.kpi-value{font-size:24px;font-weight:730;letter-spacing:-.03em}.pos{color:var(--green)}.neg{color:var(--red)}
+.grid{display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px}.panel{padding:18px}.assumptions{align-self:start}
+.section{padding:14px 0;border-top:1px solid var(--line)}.section:first-of-type{border-top:0;padding-top:0}
+.field{display:grid;grid-template-columns:1fr 100px;gap:6px 8px;align-items:center;margin:9px 0}.field label{font-size:12px;color:#cbd9ed}.field .hint{grid-column:1/-1;margin-top:-2px}
+input[type=number],input[type=text],select{width:100%;background:#091526;border:1px solid #36516f;color:var(--text);border-radius:6px;padding:6px;font:inherit;font-size:13px}
+.field input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--blue);margin:0}.switch{display:flex;gap:8px;align-items:center;margin:10px 0;font-size:12px;color:#cbd9ed}.switch input{accent-color:var(--blue)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:4px 22px}.fgrid .field{grid-template-columns:1fr 112px}
+.inp{position:relative}.inp input{padding-left:22px}.inp.sfx input{padding-left:6px;padding-right:30px}.inp .u{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;pointer-events:none}.inp.sfx .u{left:auto;right:8px}
+details.card-sec{border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,#122039,#0e1a2e);margin-bottom:14px}details.card-sec>summary{cursor:pointer;padding:14px 18px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:10px}details.card-sec>summary::-webkit-details-marker{display:none}details.card-sec>summary::after{content:'▾';color:var(--muted)}details.card-sec:not([open])>summary::after{content:'▸'}details.card-sec>.body{padding:0 18px 12px}
+.results{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}.charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.chartbox{min-height:270px}.chartbox canvas{display:block;width:100%;height:230px}
+.donutbox{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.donutbox canvas{width:200px;height:200px;flex:none}.dleg{list-style:none;margin:0;padding:0;flex:1;min-width:190px;font-size:13px}.dleg li{display:flex;gap:8px;align-items:baseline;padding:3px 0;border-bottom:1px solid var(--line)}.dleg li:last-child{border:0}.dleg .nm{flex:1}.dleg .pc{color:var(--muted);width:42px;text-align:right}.dleg .am{width:78px;text-align:right}
+.legend{display:flex;gap:15px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:6px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}
+.table-wrap{overflow:auto}table.t{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}.t th,.t td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.t th:first-child,.t td:first-child{text-align:left}.t th{color:var(--muted);font-size:12px;font-weight:600}.t.small{font-size:12px}.t.small td,.t.small th{padding:6px}
+.t td.sub-row{color:var(--muted)}
+.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.list{margin:0;padding-left:18px;color:var(--muted);font-size:12px}.foot{font-size:12px;color:var(--muted);margin-top:12px}
+.badge{font-size:11px;border:1px solid var(--line);padding:3px 7px;border-radius:999px;color:var(--muted)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}.row label{font-size:12px;color:var(--muted)}.row select,.row input[type=text]{width:auto;min-width:180px}
+.decs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}.dec{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer;font:inherit;font-size:13px;text-align:left}.dec small{display:block;color:var(--muted);font-size:11px}.dec[aria-pressed=true]{border-color:var(--blue);background:var(--panel2)}
+.hint{color:var(--muted);font-size:12px}.field.chg>label{color:var(--orange)}.field.chg .inp input,.field.chg select{border-color:var(--orange)}.plan{grid-column:1/-1;color:var(--orange);font-size:11px}.golink{color:inherit;text-decoration:underline dotted;cursor:pointer}.golink:hover{text-decoration:underline}.flash{outline:2px solid var(--orange);outline-offset:3px;border-radius:6px;transition:outline .3s}.banner{margin:12px 0;border-radius:8px;padding:12px 14px;border:1px solid;font-size:13px}.banner.no{background:#2a1520;border-color:#7a3347}.banner.yes{background:#10261f;border-color:#2b6a58}.banner strong{font-size:14px}.banner ul{margin:6px 0 0;padding-left:18px;color:#e6c9d1}.banner.yes ul{color:#c8ece0}.banner .hint{margin-top:6px}.chk{display:flex;gap:8px;align-items:center;font-size:13px;margin:6px 0}
+@media(max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.shell{padding:14px}.charts,.details,.kpis{grid-template-columns:minmax(0,1fr)}h1{font-size:23px}.actions{margin-top:10px}}
+</style>
+</head>
+<body><main class="shell">
+<header class="top"><div><div class="eyebrow">Offline household decision planner</div><h1>Household Finance Planner</h1><p class="sub">Set up your household once, then compare any big decision against it. Estimates only — not tax, legal, or investment advice.</p></div>
+<div class="actions"><span class="badge" id="cloudStatus" hidden></span><button class="btn" id="btnCloud" hidden>Sign in to sync</button><button class="btn" id="btnExport">Export backup</button><button class="btn" id="btnImport">Import backup</button><input type="file" id="fileImport" accept=".json,application/json" hidden></div></header>
+<div id="storageNotice" class="notice bad" hidden></div>
+<nav class="tabs" role="tablist"><button class="tab" role="tab" data-tab="snapshot">Snapshot</button><button class="tab" role="tab" data-tab="decisions">Decisions</button><button class="tab" role="tab" data-tab="retirement">Retirement</button><button class="tab" role="tab" data-tab="backup">Backup</button></nav>
+<div id="view"></div>
+</main>
+
+<script id="engine">
+/* ===== Pure calculation + data layer (no DOM). Also exercised by node tests. ===== */
+const pmt=(balance,annualRate,termYears)=>{if(!balance)return 0;const r=annualRate/1200,n=termYears*12;return r?balance*r/(1-Math.pow(1+r,-n)):balance/n};
+function amort(balance,rate,payment,months){let interest=0,paid=0;for(let i=0;i<months&&balance>1e-7;i++){const due=balance*rate/1200,actual=Math.min(payment,balance+due);interest+=Math.min(due,actual);paid+=actual;balance+=due-actual}return{balance:Math.max(0,balance),interest,paid}}
+function mortgageBalance(principal,ratePct,termYears,months){const p=pmt(principal,ratePct,termYears),r=ratePct/1200;if(!principal)return 0;if(!r)return Math.max(0,principal-p*months);return Math.max(0,principal*Math.pow(1+r,months)-p*(Math.pow(1+r,months)-1)/r)}
+
+/* ----- Reinhart rental-vs-sell projection (math carried over unchanged from the standalone calculator) ----- */
+const REINHART_DEFAULTS={years:20,value:300000,loan:100000,rate:4,payment:800,rent:2000,rentGrowth:2.5,tax:3000,insurance:1200,expenseInflation:2.5,reserve:10,reserveFundsRepairs:true,appreciation:3,basis:200000,depreciation:7000,sellCost:6,deadline:2029,exclusion:500000,brokerStart:100000,brokerReturn:5,fedOrd:25,stateOrd:3.8,gains:15,recapture:25,extraHomeLoan:100000,newRate:6.5,newTerm:30,roofCost:10000,roofYear:5,furnaceCost:6000,furnaceYear:8,vacancy:5,paidMaintenance:0,capitalFunding:2000,stateGain:3.8};
+const REINHART_WORKBOOK={rent:2000,tax:3000,depreciation:7000,appreciation:2.5,extraHomeLoan:100000,brokerStart:100000,brokerReturn:7,fedOrd:22,paidMaintenance:2000};
+function reinhartRows(s,workbookMode,years){
+  const rows=[],growth=1+s.brokerReturn/100,gainRate=(s.gains+s.stateGain)/100,extraMonthly=pmt(s.extraHomeLoan,s.newRate,s.newTerm);
+  let reservePool=0,cashBroker=0,cashBasis=0,improvements=0,previousOld={paid:0,interest:0},previousNew={paid:0};
+  const n=years==null?Math.max(1,Math.min(30,Math.round(s.years))):years;
+  for(let y=1;y<=n;y++){
+    const gross=s.rent*12*(1+s.rentGrowth/100)**(y-1),inflation=(1+s.expenseInflation/100)**(y-1);
+    const vacancy=gross*s.vacancy/100,allowance=Math.max(0,gross*s.reserve/100-vacancy);
+    const funding=workbookMode?s.capitalFunding*inflation:allowance;
+    const maintenance=s.paidMaintenance*inflation+(s.reserveFundsRepairs?0:funding);
+    const op=(s.tax+s.insurance)*inflation+vacancy+maintenance;
+    const repair=(y===Math.round(s.roofYear)?s.roofCost:0)+(y===Math.round(s.furnaceYear)?s.furnaceCost:0);
+    improvements+=repair;
+    const old=amort(s.loan,s.rate,s.payment,y*12),extra=amort(s.extraHomeLoan,s.newRate,extraMonthly,y*12);
+    const reinhPmt=old.paid-previousOld.paid,extraPmt=extra.paid-previousNew.paid;
+    const dep=Math.min(s.depreciation,Math.max(0,s.basis-(y-1)*s.depreciation));
+    const incomeTax=Math.max(0,gross-op-(old.interest-previousOld.interest)-dep)*(s.fedOrd+s.stateOrd)/100;
+    previousOld=old;previousNew=extra;
+    const res=s.reserveFundsRepairs?funding:0;reservePool+=res;
+    const covered=Math.min(reservePool,repair);reservePool-=covered;
+    const net=gross-op-res-reinhPmt-extraPmt-incomeTax-(repair-covered);
+    cashBroker=cashBroker*growth+net;cashBasis+=net;
+    const property=s.value*(1+s.appreciation/100)**y,proceeds=property*(1-s.sellCost/100);
+    const depreciation=Math.min(s.basis,y*s.depreciation);
+    const realized=Math.max(0,proceeds-(s.basis+improvements-depreciation));
+    const recapture=Math.min(depreciation,realized);
+    const exclusion=y<s.deadline-2026?s.exclusion:0; // November anniversaries fall after the September cutoff
+    const saleTax=recapture*(s.recapture+s.stateGain)/100+Math.max(0,realized-recapture-exclusion)*(gainRate);
+    const rentalTerminal=proceeds-old.balance-extra.balance-saleTax+reservePool+cashBroker-Math.max(0,cashBroker-cashBasis)*gainRate;
+    const preTax=s.brokerStart*growth**y,investTerminal=preTax-Math.max(0,preTax-s.brokerStart)*gainRate;
+    rows.push({y,gross,op,res,repair,reinhPmt,extraPmt,incomeTax,net,reinhBal:old.balance,extraBal:extra.balance,property,proceeds,saleTax,reservePool,cashBroker,rentalTerminal,investTerminal,diff:rentalTerminal-investTerminal});
+  }
+  return rows;
+}
+const reinhartBase=wb=>wb?{...REINHART_DEFAULTS,...REINHART_WORKBOOK}:{...REINHART_DEFAULTS};
+
+/* ----- Household baseline: plain {key: number} values ----- */
+// [key, group, label, unit, default, hint]
+const BASELINE_DEFS=[
+ ['chrisAge','Household','Your age','yr',40,'Timeline starts today at this age'],
+ ['annieAge','Household','Partner’s age','yr',40,'Reference only'],
+ ['takeHome','Income','Take-home pay (both salaries)','$/yr',100000,'After taxes, payroll and benefits — the money you actually spend from'],
+ ['chrisGross','Income','Your gross salary','$/yr',60000,'Only used to weight income growth'],
+ ['annieGross','Income','Partner’s gross salary','$/yr',60000,'Includes bonuses; only used to weight income growth'],
+ ['chrisGrowth','Income','Your income growth','%/yr',3,''],
+ ['annieGrowth','Income','Partner’s income growth','%/yr',3,''],
+ ['recurringSpend','Spending','All-in recurring spending','$/yr',72000,''],
+ ['spendBasis','Spending','Spending basis used in projections','basis',0,'Two separate bases — never combine them, or spending is counted twice'],
+ ['homeTax','Planning reserve','New-home property tax','$/yr',3000,''],
+ ['homeIns','Planning reserve','Homeowners insurance','$/yr',0,''],
+ ['resUtilities','Planning reserve','New-home utilities (beyond the categories)','$/yr',0,''],
+ ['resMaint','Planning reserve','New-home maintenance','$/yr',0,''],
+ ['resOther','Planning reserve','Other costs not yet in a category','$/yr',0,''],
+ ['oneTimeY1','Spending','One-time first-year spending','$',0,''],
+ ['cashReserves','Savings & investments','Cash today','$',20000,''],
+ ['reserveTarget','Savings & investments','Cash to keep on hand','$',20000,'Cash above this is invested each year'],
+ ['taxableAcct','Savings & investments','Taxable brokerage','$',100000,'Available any time'],
+ ['retirementAcct','Savings & investments','Retirement accounts (401k / IRA)','$',100000,'Penalty-free from the access age below'],
+ ['contributions','Savings & investments','Annual contributions','$/yr',15000,'A transfer to investments, not spending'],
+ ['contribRetShare','Savings & investments','Share going to retirement accounts','%',50,'The rest goes to taxable'],
+ ['homeValue','Home & mortgage','New home value','$',350000,''],
+ ['homeAppreciation','Home & mortgage','Home appreciation','%/yr',3,''],
+ ['newMortgage','Home & mortgage','Mortgage balance','$',250000,''],
+ ['mortgagePmt','Home & mortgage','Monthly principal + interest target','$/mo',1500,''],
+ ['newMortgageRate','Home & mortgage','Mortgage rate','%',6.5,''],
+ ['newMortgageTerm','Home & mortgage','Mortgage term','yr',30,'Principal + interest only; taxes and insurance are separate'],
+ ['retireAge','Retirement','Retirement age','yr',60,''],
+ ['horizonAge','Retirement','Plan through age','yr',90,''],
+ ['retireSpend','Retirement','Retirement spending','$/yr',60000,'Today’s dollars, after income tax'],
+ ['ssAmount','Retirement','Your Social Security','$/yr',20000,'Today’s dollars'],
+ ['ssAge','Retirement','Social Security starts at','yr',67,''],
+ ['workReturn','Retirement','Return while working','%',7,''],
+ ['retireReturn','Retirement','Return in retirement','%',5,''],
+ ['inflation','Retirement','Inflation','%',2.5,''],
+ ['cashReturn','Taxes & account access','Cash return','%',0,''],
+ ['accessAge','Taxes & account access','Retirement accounts open penalty-free at','yr',59.5,'Rule of 55 / 72(t) are not modeled'],
+ ['earlyPenalty','Taxes & account access','Early-withdrawal penalty','%',10,''],
+ ['ordTax','Taxes & account access','Income tax on retirement withdrawals','%',15,'Also applied to the taxable part of Social Security'],
+ ['ssTaxable','Taxes & account access','Taxable share of Social Security','%',85,''],
+ ['gainTax','Taxes & account access','Tax on investment gains (fed + state)','%',18.8,''],
+ ['gainShare','Taxes & account access','Gain share of taxable withdrawals','%',40,'The rest is return of your own money']
+];
+const SPEND_CATS=[
+ ['c_tithing','Charitable giving',100,''],
+ ['c_venmo','Shared expenses A',100,''],
+ ['c_checks','Shared expenses B',100,''],
+ ['c_fuel','Fuel',100,''],
+ ['c_phone','Phone',100,''],
+ ['c_utilities','Electricity and gas',100,'Direct utility payments, six-month average'],
+ ['c_internet','Internet',100,''],
+ ['c_tuition','Tuition',100,'Annualized direct payments'],
+ ['c_bankfees','Bank fees',100,''],
+ ['c_household','Household shopping and supplies',100,'After moving the mixed-store share to groceries / toiletries / cosmetics'],
+ ['c_dining','Dining',100,''],
+ ['c_cardbills','Card-paid bills and utilities',100,''],
+ ['c_transport','Transportation (other than fuel)',100,''],
+ ['c_homemaint','Home maintenance and supplies',100,''],
+ ['c_entertainment','Entertainment',100,''],
+ ['c_personal','Personal and fitness',100,''],
+ ['c_education','Education extras',100,'Separate from direct tuition'],
+ ['c_travel','Travel reserve',100,''],
+ ['c_gifts','Gifts and extra donations reserve',100,''],
+ ['c_cardfee','Credit-card annual fee, net of credits',100,''],
+ ['c_cash','Cash spending reserve',100,'']
+];
+const MIX_DEFS=[
+ ['groceriesCoded','Groceries (grocery-coded spending)',100,'$/mo','Before the mixed-store share below'],
+ ['mixedPool','Mixed-store shopping',50,'$/mo','Shopping pool split into the three shares below'],
+ ['mixGroc','Mixed-store share → groceries',85,'%',''],['mixToil','Mixed-store share → toiletries',10,'%',''],['mixCosm','Mixed-store share → cosmetics',5,'%','']];
+BASELINE_DEFS.splice(BASELINE_DEFS.findIndex(d=>d[1]==='Savings & investments'),0,
+  ...MIX_DEFS.map(([k,l,v,u,hint])=>[k,'Spending detail',l,u,v,hint]),
+  ...SPEND_CATS.map(([k,l,v,hint])=>[k,'Spending detail',l,'$/mo',v,hint]));
+/* Category cross-check of household spending (monthly inputs -> annual). Does not replace the whole-household estimate unless chosen. */
+function spendSummary(v){
+  const pool=v.mixedPool,groc=v.groceriesCoded+pool*v.mixGroc/100,toil=pool*v.mixToil/100,cosm=pool*v.mixCosm/100;
+  const rows=[['Groceries',groc],['Toiletries',toil],['Cosmetics',cosm],...SPEND_CATS.map(([k,l])=>[l,v[k]])];
+  const monthly=rows.reduce((s,r)=>s+r[1],0),travel=v.c_travel,nonHousing=monthly*12,mortgage=12*v.mortgagePmt,alloc=RESERVE_LINES.reduce((s,r)=>s+v[r[0]],0);
+  return{rows,monthly,nonHousing,travelAnnual:travel*12,nonHousingExTravel:nonHousing-travel*12,mortgage,ongoing:nonHousing+mortgage,taxIns:alloc,detailed:nonHousing+mortgage+alloc,firstYearDetailed:nonHousing+mortgage+alloc+v.oneTimeY1,whole:v.recurringSpend,gap:v.recurringSpend-(nonHousing+mortgage),reserveLeft:v.recurringSpend-(nonHousing+mortgage+alloc)}
+}
+/* Planning reserve: the unallocated part of the all-in estimate, drawn down as costs are entered/confirmed. */
+function reserveSummary(B){const v=valuesOf(B),s=spendSummary(v),checks=B.checks||{};
+  const lines=RESERVE_LINES.map(([k,label,ck])=>({key:k,label,check:ck,amount:v[k],confirmed:ck?!!checks[ck]:false}));
+  const confirmed=lines.filter(l=>l.confirmed).reduce((a,l)=>a+l.amount,0),estimated=lines.filter(l=>!l.confirmed).reduce((a,l)=>a+l.amount,0);
+  return{start:s.gap,lines,confirmed,estimated,allocated:confirmed+estimated,remaining:s.gap-confirmed-estimated}}
+/* Annual spending for projection year t by selected basis. All-in estimate includes property tax/insurance (planning reserve); category build adds them explicitly. */
+function annualSpend(v,t){const f=(1+v.inflation/100)**(t-1);
+  if(v.spendBasis===1){const s=spendSummary(v);return(s.nonHousing+s.taxIns)*f+(t<=v.newMortgageTerm?s.mortgage:0)}
+  return v.recurringSpend*f} // all-in estimate: already covers property tax, insurance, utilities and maintenance
+const CHECKS=[['mortgage','Final mortgage rate and balance'],['wagnerTax','Actual property-tax bill'],['homeIns','Homeowners insurance quote'],['utilities','New-home utilities'],['maintenance','New-home maintenance'],['flooring','Final one-time cost'],['vehicle','Vehicle replacement budget and timing']];
+const RESERVE_LINES=[['homeTax','New-home property tax','wagnerTax'],['homeIns','Homeowners insurance','homeIns'],['resUtilities','New-home utilities','utilities'],['resMaint','New-home maintenance','maintenance'],['resOther','Other costs',null]];
+const defaultBaseline=()=>{const values={};for(const d of BASELINE_DEFS)values[d[0]]=d[4];return{schema:2,values,checks:{}}};
+const valuesOf=B=>{const o={},src=(B&&B.values)||{};for(const d of BASELINE_DEFS){const n=Number(src[d[0]]);o[d[0]]=Number.isFinite(n)&&src[d[0]]!==null&&src[d[0]]!==''?n:d[4]}return o};
+function normalizeBaseline(b){const out=defaultBaseline();if(!b)return out;const src=b.values||(b.items&&Object.fromEntries(Object.entries(b.items).map(([k,i])=>[k,i&&i.value])))||{};for(const k in out.values){const n=Number(src[k]);if(src[k]!=null&&src[k]!==''&&Number.isFinite(n))out.values[k]=n}if(b.checks&&typeof b.checks==='object')for(const[ck]of CHECKS)if(b.checks[ck]===true)out.checks[ck]=true;return out}
+
+/* ----- Decision types -----
+   Each type: label, blurb, defaults(v,wb), groups (editable fields), build(params,wb,v) -> {H, options:[A,B], extra}
+   An option is a set of household changes: sleeve (invested lump), net[t] (yearly cash flow), equity[t] (non-liquid value),
+   lump[t] (one-time cash), liq (cash released at end of year t). Arrays are 1-indexed by projection year. */
+const emptyOpt=name=>({name,sleeve0:0,sleeveRet:0,sleeveBasis:0,sleeveTax:0,net:[],equity:[],lump:[],liq:{t:0,amount:0}});
+const SERIES=60;
+function reinhartOptions(state,workbookMode){
+  const H=Math.max(1,Math.min(30,Math.round(state.years))),rows=reinhartRows(state,workbookMode,H);
+  const sell=Object.assign(emptyOpt('Sell & invest'),{sleeve0:state.brokerStart,sleeveRet:state.brokerReturn/100,sleeveBasis:state.brokerStart,sleeveTax:(state.gains+state.stateGain)/100});
+  const keep=emptyOpt('Keep as rental');keep.liq.t=H;
+  rows.forEach(r=>{keep.net[r.y]=r.net;keep.equity[r.y]=r.y<H?r.property-r.reinhBal-r.extraBal+r.reservePool:0});
+  const last=rows[H-1];keep.liq.amount=last.proceeds-last.saleTax-last.reinhBal-last.extraBal+last.reservePool;
+  return{rows,sell,keep,H};
+}
+const REINHART_GROUPS=[['Time & property',[['years','Projection years',1,30,1],['value','Current property value',100000,800000,5000],['loan','Current rental mortgage',0,300000,1000],['rate','Rental mortgage rate (%)',0,12,.1],['payment','Rental mortgage P&I / month',0,3000,25],['appreciation','Rental appreciation (%)',-5,10,.1],['basis','Adjusted tax basis',0,500000,1000],['depreciation','Annual depreciation planning',0,20000,100]]],['Rental income & costs',[['rent','Monthly rent incl. pet rent',0,5000,25],['rentGrowth','Rent growth (%)',-2,10,.1],['tax','Property tax / year',0,15000,100],['insurance','Landlord insurance / year',0,10000,50],['expenseInflation','Expense inflation (%)',-2,10,.1],['reserve','Maintenance + vacancy reserve (% gross rent)',0,35,.5],['reserveFundsRepairs','Use annual reserve to fund major replacements',0,0,0,'bool']]],['Major repairs',[['roofCost','Roof replacement cost',0,50000,500],['roofYear','Roof replacement year',1,30,1],['furnaceCost','Furnace replacement cost',0,30000,500],['furnaceYear','Furnace replacement year',1,30,1]]],['Sale, investment & new-home debt',[['sellCost','Future sale cost (%)',0,12,.1],['brokerStart','Sell-now net invested proceeds',0,400000,1000],['brokerReturn','Brokerage return (%)',-5,15,.1],['extraHomeLoan','Extra new-home loan if rental kept',0,400000,1000],['newRate','New-home rate (%)',0,12,.1],['newTerm','New-home loan term (years)',1,40,1]]],['Tax assumptions',[['fedOrd','Federal ordinary rate (%)',0,50,.1],['stateOrd','State ordinary rate (%)',0,15,.1],['gains','Federal capital-gains rate (%)',0,35,.1],['recapture','Depreciation recapture rate (%)',0,35,.1],['deadline','Primary-exclusion deadline (year)',2026,2040,1],['exclusion','Primary-exclusion cap',0,1000000,5000]]],['Workbook and tax refinements',[['vacancy','Vacancy allowance (% scheduled rent)',0,10,.5],['paidMaintenance','Separate paid maintenance / year',0,12000,100],['capitalFunding','Workbook capital reserve / year',0,12000,100],['stateGain','State rate on taxable gains (%)',0,15,.1]]]];
+
+function paydownBuild(p,wb,v){
+  const B0=v.newMortgage,r=v.newMortgageRate,term=v.newMortgageTerm,L=Math.max(0,Math.min(p.amount,B0)),p0=pmt(B0,r,term),pRed=p.recast?pmt(B0-L,r,term):p0;
+  const pay=emptyOpt('Pay down mortgage'),inv=emptyOpt('Invest instead');
+  let pa=0,pb=0;
+  for(let t=1;t<=SERIES;t++){const a=amort(B0,r,p0,12*t),b=amort(B0-L,r,pRed,12*t);pay.net[t]=(a.paid-pa)-(b.paid-pb);pay.equity[t]=a.balance-b.balance;pa=a.paid;pb=b.paid}
+  Object.assign(inv,{sleeve0:L,sleeveRet:p.investReturn/100,sleeveBasis:L,sleeveTax:p.taxRate/100});
+  return{H:Math.round(p.years),options:[pay,inv],extra:{p0,pRed,L}};
+}
+function vehicleBuild(p,wb,v){
+  const mk=(pre,name)=>{const o=emptyOpt(name),yr=Math.max(1,Math.round(p[pre+'Year'])),price=p[pre+'Price'],trade=Math.min(p[pre+'Trade'],price),fin=Math.max(0,Math.min(1,p[pre+'Finance']/100))*(price-trade),rate=p[pre+'Rate'],term=Math.max(1,p[pre+'Term']),pay=pmt(fin,rate,term),dep=p.depreciation/100;
+    o.lump[yr]=-(price-trade-fin);let prev=0;
+    for(let t=1;t<=SERIES;t++){if(t<yr){o.net[t]=-p[pre+'Repairs'];o.equity[t]=trade}else{const a=amort(fin,rate,pay,12*(t-yr+1));o.net[t]=-(a.paid-prev);prev=a.paid;o.equity[t]=price*(1-dep)**(t-yr+1)-a.balance}}
+    return o};
+  return{H:Math.round(p.years),options:[mk('a','Replace in year '+Math.round(p.aYear)),mk('b','Replace in year '+Math.round(p.bYear))],extra:{}};
+}
+function customBuild(p,wb,v){
+  const mk=(pre,name)=>{const o=emptyOpt(name),cy=Math.max(1,Math.round(p[pre+'CostYear'])),start=Math.max(1,Math.round(p[pre+'Start'])),len=Math.max(0,Math.round(p[pre+'Years'])),keep=p[pre+'AssetPct']/100,dep=p.depreciation/100,inv=p[pre+'Invest'];
+    o.lump[cy]=-p[pre+'Cost'];
+    for(let t=1;t<=SERIES;t++){o.net[t]=t>=start&&t<start+len?p[pre+'Annual']:0;o.equity[t]=t>=cy?p[pre+'Cost']*keep*(1-dep)**(t-cy+1):0}
+    Object.assign(o,{sleeve0:inv,sleeveRet:p.investReturn/100,sleeveBasis:inv,sleeveTax:p.taxRate/100});return o};
+  return{H:Math.round(p.years),options:[mk('a','Option A'),mk('b','Option B')],extra:{}};
+}
+const optFields=(pre,L)=>[[pre+'Cost',L+': one-time cost',0,300000,500],[pre+'CostYear',L+': year of cost',1,40,1],[pre+'AssetPct',L+': % of cost kept as an asset',0,100,5],[pre+'Annual',L+': yearly cash change (+ income / − cost)',-100000,100000,500],[pre+'Start',L+': yearly change starts in year',1,40,1],[pre+'Years',L+': for how many years',0,40,1],[pre+'Invest',L+': lump sum invested',0,500000,1000]];
+const carFields=(pre,L)=>[[pre+'Year',L+': year bought',1,30,1],[pre+'Price',L+': price',0,120000,500],[pre+'Trade',L+': trade-in / sale of old car',0,60000,500],[pre+'Finance',L+': % of balance financed',0,100,5],[pre+'Rate',L+': loan rate (%)',0,20,.1],[pre+'Term',L+': loan term (years)',1,8,1],[pre+'Repairs',L+': old-car repairs / yr until replaced',0,10000,100]];
+const TYPES={
+ reinhart:{label:'Rental vs. sell',blurb:'Keep the rental property, or sell it and invest the proceeds.',presets:true,defaults:(v,wb)=>reinhartBase(wb),groups:REINHART_GROUPS,sens:[['brokerReturn','Brokerage return','abs',2,'pts'],['rent','Monthly rent','pct',.1],['appreciation','Rental appreciation','abs',2,'pts'],['sellCost','Sale costs','abs',2,'pts'],[['roofCost','furnaceCost'],'Major repairs (roof + furnace)','pct',.5]],build:(p,wb)=>{const o=reinhartOptions(p,wb);return{H:o.H,options:[o.sell,o.keep],extra:{rows:o.rows}}}},
+ paydown:{label:'Mortgage paydown vs. invest',blurb:'Put a lump sum toward the new mortgage, or invest it. Assumes the money is extra cash not already in your accounts.',defaults:v=>({amount:50000,recast:true,investReturn:v.workReturn,taxRate:v.gainTax,years:20}),build:paydownBuild,sens:[['investReturn','Investment return','abs',2,'pts'],['amount','Lump sum','pct',.5]],
+   groups:[['Lump sum',[['amount','Amount available',0,400000,1000],['recast','Lower the payment (recast) instead of paying off early',0,0,0,'bool']]],['Invest alternative',[['investReturn','Investment return (%)',-5,15,.1],['taxRate','Tax on gains at the end (%)',0,40,.1]]],['Compare at',[['years','Years',1,40,1]]]]},
+ vehicle:{label:'Vehicle replacement',blurb:'Compare replacing a car now versus later, cash or financed. Defaults are placeholders — edit to your quotes.',defaults:()=>({years:10,depreciation:15,aYear:1,aPrice:38000,aTrade:20000,aFinance:0,aRate:6,aTerm:5,aRepairs:0,bYear:4,bPrice:41000,bTrade:12000,bFinance:0,bRate:6,bTerm:5,bRepairs:1500}),build:vehicleBuild,sens:[['depreciation','Depreciation','abs',5,'pts'],[['aPrice','bPrice'],'Vehicle price','pct',.1],['bRepairs','Old-car repairs (Option B)','pct',.5]],
+   groups:[['Option A',carFields('a','A')],['Option B',carFields('b','B')],['Shared',[['depreciation','Value lost per year (%)',0,40,1],['years','Compare at (years)',1,40,1]]]]},
+ custom:{label:'Custom what-if',blurb:'Model anything else: a purchase, a job change, a windfall. Describe two options and compare them.',defaults:v=>({years:10,depreciation:10,investReturn:v.workReturn,taxRate:v.gainTax,aCost:30000,aCostYear:1,aAssetPct:50,aAnnual:0,aStart:1,aYears:0,aInvest:0,bCost:0,bCostYear:1,bAssetPct:0,bAnnual:0,bStart:1,bYears:0,bInvest:0}),build:customBuild,sens:[['investReturn','Investment return','abs',2,'pts'],['depreciation','Asset depreciation','abs',5,'pts']],
+   groups:[['Option A',optFields('a','A')],['Option B',optFields('b','B')],['Shared',[['depreciation','Value lost per year on kept assets (%)',0,40,1],['investReturn','Return on invested lump sums (%)',-5,15,.1],['taxRate','Tax on those gains (%)',0,40,.1],['years','Compare at (years)',1,40,1]]]]}
+};
+
+/* ----- Household simulation: monthly cash while working, yearly accounts through the horizon ----- */
+function simulate(B,dec){
+  const v=valuesOf(B),inf=v.inflation/100,wr=v.workReturn/100,rr=v.retireReturn/100,cr=v.cashReturn/100;
+  const endT=Math.max(1,Math.round(v.horizonAge-v.chrisAge)),retireYrs=Math.max(0,Math.round(v.retireAge-v.chrisAge));
+  const d=dec||emptyOpt('Baseline');
+  let cash=v.cashReserves,tx=v.taxableAcct,rt=v.retirementAcct,sl=d.sleeve0||0;
+  const share=v.contribRetShare/100,cm=Math.pow(1+cr,1/12),gw=(v.chrisGross+v.annieGross)||1;
+  const homeEq=t=>v.homeValue*(1+v.homeAppreciation/100)**t-mortgageBalance(v.newMortgage,v.newMortgageRate,v.newMortgageTerm,12*t);
+  const slTaxPending=()=>Math.max(0,sl-d.sleeveBasis)*d.sleeveTax;
+  const mk=(t,extra)=>({t,age:v.chrisAge+t,cash,taxable:tx,sleeve:sl,retirement:rt,newHome:homeEq(t),rentalEq:t>0?(d.equity[t]||0):0,nw:cash+tx+sl-slTaxPending()+rt+homeEq(t)+(t>0?(d.equity[t]||0):0),...extra});
+  const rows=[mk(0,{phase:'start'})];let low={amount:cash,index:0};
+  for(let t=1;t<=endT;t++){
+    const age0=v.chrisAge+t-1,f=(1+inf)**(t-1),decNet=d.net[t]||0,lump=d.lump[t]||0,working=t<=retireYrs;
+    if(t===retireYrs+1&&sl>0){tx+=sl-slTaxPending();sl=0} // gains on the invested lump are realized when retirement starts
+    let r;
+    if(working){
+      const takeHome=v.takeHome*(v.chrisGross*(1+v.chrisGrowth/100)**(t-1)+v.annieGross*(1+v.annieGrowth/100)**(t-1))/gw,spend=annualSpend(v,t),one=t===1?v.oneTimeY1:0;
+      const monthly=(takeHome-spend-v.contributions+decNet)/12;
+      for(let m=1;m<=12;m++){cash=cash*cm+monthly+(m===1?lump-one:0);const idx=(t-1)*12+m;if(cash<low.amount)low={amount:cash,index:idx}}
+      rt=rt*(1+wr)+v.contributions*share;tx=tx*(1+wr)+v.contributions*(1-share);sl*=1+d.sleeveRet;
+      if(cash>v.reserveTarget){tx+=cash-v.reserveTarget;cash=v.reserveTarget}
+      r={phase:'work',income:takeHome,decNet,lump,spending:spend+one,contributions:v.contributions,cashflow:takeHome-spend-one-v.contributions+decNet,baseCashflow:takeHome-spend-one-v.contributions,wCash:0,wTaxable:0,wRetire:0,taxes:0,unfunded:0,need:0,ss:0,real:f};
+    }else{
+      const need=v.retireSpend*f,ss=age0>=v.ssAge?v.ssAmount*f:0,ssTax=ss*v.ssTaxable/100*v.ordTax/100;
+      let N=need+ssTax-ss-decNet-lump,wCash=0,wTx=0,wRt=0,taxes=ssTax;const penalty=age0<v.accessAge;
+      const tauT=v.gainShare/100*v.gainTax/100,tauR=v.ordTax/100+(penalty?v.earlyPenalty/100:0);
+      if(N<=0){cash+=-N;N=0}
+      else{
+        wCash=Math.min(cash,N);cash-=wCash;N-=wCash;
+        if(N>1e-6&&tx>0){const g=Math.min(tx,N/(1-tauT));tx-=g;N-=g*(1-tauT);wTx=g;taxes+=g*tauT}
+        if(N>1e-6&&rt>0){const g=Math.min(rt,N/(1-tauR));rt-=g;N-=g*(1-tauR);wRt=g;taxes+=g*tauR}
+      }
+      cash*=1+cr;tx*=1+rr;rt*=1+rr;
+      r={phase:'retired',income:ss+decNet,decNet,lump,spending:need,contributions:0,cashflow:0,wCash,wTaxable:wTx,wRetire:wRt,taxes,unfunded:Math.max(0,N),need,ss,penalty,real:f};
+    }
+    if(t===d.liq.t&&d.liq.amount)tx+=d.liq.amount;
+    rows.push(mk(t,r));
+  }
+  return{rows,low,retireYrs,endT,v};
+}
+const monthLabel=idx=>{if(idx<=0)return'today';const d=new Date(2026,10+idx-1,1);return d.toLocaleString('en-US',{month:'short',year:'numeric'})};
+function metrics(sim,H){
+  const{rows,v,retireYrs}=sim,y1=rows[1],ret=rows[Math.min(retireYrs,rows.length-1)],hz=rows[Math.min(H,rows.length-1)],last=rows[rows.length-1];
+  const retired=rows.filter(r=>r.phase==='retired'),gapRows=retired.filter(r=>r.age-1<v.ssAge),deplete=retired.find(r=>r.unfunded>1);
+  return{monthlyY1:y1.cashflow/12,monthlyBaseY1:y1.baseCashflow/12,monthlyDecY1:y1.decNet/12,
+    lowCash:sim.low.amount,lowCashWhen:monthLabel(sim.low.index),
+    accessibleAtRetire:ret.cash+ret.taxable+ret.sleeve,retirementAtRetire:ret.retirement,homeAtRetire:ret.newHome+ret.rentalEq,
+    terminalNW:hz.nw,terminalAge:hz.age,
+    gapReal:gapRows.reduce((s,r)=>s+Math.max(0,r.need-r.ss-r.decNet)/r.real,0),gapFirstYearReal:gapRows.length?Math.max(0,gapRows[0].need-gapRows[0].ss-gapRows[0].decNet)/gapRows[0].real:0,gapYears:gapRows.length,
+    depletionAge:deplete?deplete.age:null,liquidEnd:last.cash+last.taxable+last.retirement+last.sleeve};
+}
+
+/* ----- Plan comparison + decision-readiness ----- */
+const fmtMoney=x=>(x<0?'−$':'$')+Math.round(Math.abs(x)).toLocaleString('en-US');
+function fmtVal(unit,x){if(unit==='basis')return x===1?'Detailed category build':'All-in estimate';if(unit==='%'||unit==='%/yr')return x+'%';if(unit==='yr')return String(x);return fmtMoney(x)+(unit==='$/yr'?'/yr':unit==='$/mo'?'/mo':'')}
+function planDiffs(B){const v=valuesOf(B),out=[];for(const[k,g,label,unit,def]of BASELINE_DEFS)if(Math.abs(v[k]-def)>1e-9)out.push({key:k,group:g,label,unit,plan:def,now:v[k]});return out}
+function healthCheck(B,runs){
+  const v=valuesOf(B),blocking=[],fixes=[],helps=[];runs=runs&&runs.length?runs:[{name:'',sim:simulate(B,null)}];
+  for(const{name,sim}of runs){const m=metrics(sim,20),tag=name&&runs.length>1?name+': ':'';
+    if(sim.low.amount<0)blocking.push(tag+'cash goes negative (lowest '+fmtMoney(sim.low.amount)+', '+m.lowCashWhen+')');helps[blocking.length-1]='cash';
+    if(m.depletionAge){blocking.push(tag+'savings run out at age '+m.depletionAge);helps[blocking.length-1]='run'}}
+  if(v.spendBasis===1&&v.homeIns===0){blocking.push('The detailed spending build has no homeowners insurance yet');fixes[blocking.length-1]='[data-k="homeIns"]'};
+  if(v.spendBasis!==1){const rs=reserveSummary(B);if(rs.remaining<-0.5)blocking.push('Costs entered in the planning reserve exceed it by '+fmtMoney(-rs.remaining)+' — raise the all-in estimate or trim the reserve items');helps[blocking.length-1]='reserve'}
+  const un=CHECKS.filter(([k])=>!(B.checks&&B.checks[k])).map(c=>c[1]);
+  if(un.length)blocking.push('Still to confirm: '+un.join('; '));
+  return{ready:!blocking.length,blocking,fixes,helps,unconfirmed:CHECKS.filter(([k])=>!(B.checks&&B.checks[k])),changes:planDiffs(B).length};
+}
+function sensitivity(d,cur){
+  const T=TYPES[d.type];if(!T.sens)return null;const B=decisionBaseline(d,cur),defs=decisionDefaults(d,B),state=decisionState(d,B);
+  const diffOf=st=>{const r=runDecision({...d,overrides:diffOverrides(st,defs)},cur);return{nw:r.mets[1].terminalNW-r.mets[0].terminalNW,low:r.mets[1].lowCash-r.mets[0].lowCash}};
+  const base=diffOf(state),sg=x=>Math.abs(x)<500?0:Math.sign(x);
+  const rows=T.sens.map(([keys,label,kind,amt,unit])=>{keys=[].concat(keys);
+    const mk=s=>{const st={...state};keys.forEach(k=>{st[k]=kind==='pct'?state[k]*(1+s*amt):state[k]+s*amt});return st};
+    const lo=diffOf(mk(-1)),hi=diffOf(mk(1));
+    return{label,spec:kind==='pct'?'±'+Math.round(amt*100)+'%':'±'+amt+' '+(unit||''),lo,hi,swing:Math.abs(hi.nw-lo.nw),flips:sg(lo.nw)!==sg(base.nw)||sg(hi.nw)!==sg(base.nw)}});
+  rows.sort((a,b)=>b.swing-a.swing);return{base,rows};
+}
+
+/* ----- Decisions + persistence ----- */
+const SCHEMA_VERSION=2,APP_ID='household-finance-planner';
+const clone=o=>JSON.parse(JSON.stringify(o));
+function newDecision(baseline,type,name,id){type=TYPES[type]?type:'reinhart';return{id:id||('d'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)),type,name:name||TYPES[type].label,created:new Date().toISOString(),updated:new Date().toISOString(),workbookMode:false,overrides:{},baselineSnapshot:clone(baseline),useSavedBaseline:false}}
+const decisionBaseline=(d,current)=>d.useSavedBaseline?d.baselineSnapshot:current;
+const decisionDefaults=(d,B)=>TYPES[d.type].defaults(valuesOf(B),!!d.workbookMode);
+const decisionState=(d,B)=>({...decisionDefaults(d,B),...d.overrides});
+function diffOverrides(state,defaults){const o={};for(const k in defaults)if(state[k]!==defaults[k])o[k]=state[k];return o}
+function runDecision(d,currentBaseline){
+  const B=decisionBaseline(d,currentBaseline),v=valuesOf(B),p=decisionState(d,B),built=TYPES[d.type].build(p,!!d.workbookMode,v);
+  const sims=built.options.map(o=>simulate(B,o)),mets=sims.map(s=>metrics(s,built.H));
+  return{B,v,p,built,sims,mets,H:built.H};
+}
+function makeBackup(app){return JSON.stringify({app:APP_ID,schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString(),baseline:app.baseline,decisions:app.decisions,activeId:app.activeId},null,2)}
+function parseBackup(text){
+  let o;try{o=JSON.parse(text)}catch(e){throw new Error('Not valid JSON.')}
+  if(!o||o.app!==APP_ID)throw new Error('This file is not a Household Finance Planner backup.');
+  if(!Number.isInteger(o.schemaVersion)||o.schemaVersion>SCHEMA_VERSION)throw new Error('Backup was made by a newer version (schema '+o.schemaVersion+').');
+  const baseline=normalizeBaseline(o.baseline);
+  const decisions=(Array.isArray(o.decisions)?o.decisions:[]).filter(d=>d&&TYPES[d.type]&&typeof d.id==='string').map(d=>{
+    const snap=normalizeBaseline(d.baselineSnapshot||baseline),defs=TYPES[d.type].defaults(valuesOf(snap),!!d.workbookMode),ov={};
+    if(d.overrides&&typeof d.overrides==='object')for(const k in defs){if(!(k in d.overrides))continue;const x=d.overrides[k];if(typeof defs[k]==='boolean'){if(typeof x==='boolean')ov[k]=x}else if(x!==null&&x!==''&&Number.isFinite(Number(x)))ov[k]=Number(x)}
+    return{id:String(d.id).slice(0,40),type:d.type,name:String(d.name||'Decision').slice(0,120),created:String(d.created||''),updated:String(d.updated||''),workbookMode:!!d.workbookMode&&!!TYPES[d.type].presets,overrides:ov,baselineSnapshot:snap,useSavedBaseline:!!d.useSavedBaseline}});
+  const activeId=decisions.some(d=>d.id===o.activeId)?o.activeId:(decisions[0]?decisions[0].id:null);
+  return{baseline,decisions,activeId};
+}
+/* Private numbers/labels live in Supabase, not in this file. applyOverlay() swaps them over the neutral sample values. */
+function applyOverlay(o){
+  if(!o)return;
+  const by=(arr,i)=>Object.fromEntries(arr.map(d=>[d[0],d]));
+  const B=by(BASELINE_DEFS),S=by(SPEND_CATS),M=by(MIX_DEFS),R=by(RESERVE_LINES),C=by(CHECKS);
+  for(const[k,v]of Object.entries(o.baseline||{})){const d=B[k];if(!d)continue;if(v.label!=null)d[2]=v.label;if(Number.isFinite(v.value))d[4]=v.value;if(v.hint!=null)d[5]=v.hint}
+  for(const[k,v]of Object.entries(o.spend||{})){const d=S[k];if(!d)continue;if(v.label!=null)d[1]=v.label;if(v.hint!=null)d[3]=v.hint}
+  for(const[k,v]of Object.entries(o.mix||{})){const d=M[k];if(!d)continue;if(v.label!=null)d[1]=v.label;if(v.hint!=null)d[4]=v.hint}
+  for(const[k,v]of Object.entries(o.reserve||{})){const d=R[k];if(d&&v.label!=null)d[1]=v.label}
+  for(const[k,v]of Object.entries(o.checks||{})){const d=C[k];if(d&&typeof v==='string')d[1]=v}
+  if(o.reinhart)Object.assign(REINHART_DEFAULTS,o.reinhart);
+  if(o.workbook)Object.assign(REINHART_WORKBOOK,o.workbook);
+}
+</script>
+
+<script id="ui">
+/* ===== UI ===== */
+const STORE_KEY='household-finance-planner.v2'; // bumped to start fresh from the reference plan; the old v1 data is left untouched in the browser, not deleted
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=v=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v);
+const pct=v=>`${v.toFixed(1)}%`;
+const sgn=v=>(Math.abs(v)<0.5?'':(v>0?'+':'−'))+money(Math.abs(v));
+const cls=v=>v>0.5?'pos':v<-0.5?'neg':'';
+try{const ov=localStorage.getItem('plannerOverlay');if(ov)applyOverlay(JSON.parse(ov))}catch(e){}
+let app={baseline:defaultBaseline(),decisions:[],activeId:null,tab:'snapshot'};
+let storageOK=true,lastSaved=null;
+
+/* storage — every access guarded; page works without it */
+function loadStore(){
+  try{const t=localStorage.getItem(STORE_KEY);if(t){const p=parseBackup(t);app.baseline=p.baseline;app.decisions=p.decisions;app.activeId=p.activeId;lastSaved='(loaded)'}}
+  catch(e){if(!(e&&/Backup|JSON|schema/i.test(e.message||'')))storageOK=false}
+  if(!app.decisions.length){const d=newDecision(app.baseline,'reinhart','Rental vs. sell');app.decisions=[d];app.activeId=d.id}
+}
+let saveTimer=null;
+function persist(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{
+  try{localStorage.setItem(STORE_KEY,makeBackup(app));storageOK=true;lastSaved=new Date().toLocaleTimeString()}catch(e){storageOK=false}
+  showStorage();const el=$('#saveStatus');if(el)el.textContent=saveText();if(window.cloud)window.cloud.push()},250)}
+const saveText=()=>storageOK?('Saved in this browser '+(lastSaved||'')):'Not saved — browser storage unavailable. Export a backup.';
+function showStorage(){const n=$('#storageNotice');n.hidden=storageOK;n.textContent=storageOK?'':'Browser storage is unavailable (private window, blocked site data, or file restrictions). Edits live in this tab only — use “Export backup” before closing.'}
+function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportBackup(){download('household-finance-backup-'+new Date().toISOString().slice(0,10)+'.json',makeBackup(app),'application/json')}
+function importBackupText(text){
+  try{const p=parseBackup(text);if(!confirm('Replace the current snapshot and '+app.decisions.length+' decision(s) with the backup ('+p.decisions.length+' decision(s))? Export a backup first if unsure.'))return;
+    app.baseline=p.baseline;app.decisions=p.decisions;app.activeId=p.activeId;if(!app.decisions.length){const d=newDecision(app.baseline,'reinhart','Rental vs. sell');app.decisions=[d];app.activeId=d.id}
+    persist();setTab(app.tab);alert('Backup restored.')}
+  catch(e){alert('Import failed: '+e.message)}
+}
+
+/* ---------- charts ---------- */
+function setupCanvas(c){const dpr=window.devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);return{ctx,w,h}}
+function axes(ctx,w,h,lo,hi,fmt,p){ctx.font='11px system-ui';ctx.strokeStyle='#28405f';ctx.fillStyle='#9db0c8';ctx.lineWidth=1;for(let i=0;i<4;i++){const v=lo+(hi-lo)*i/3,y=p.t+(hi-v)*(h-p.t-p.b)/(hi-lo);ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(w-p.r,y);ctx.stroke();ctx.fillText(fmt(v),3,y+4)}}
+function xLabels(ctx,n,X,w,h,labels){ctx.fillStyle='#9db0c8';[0,Math.floor((n-1)/2),n-1].filter((v,i,a)=>a.indexOf(v)===i).forEach(i=>ctx.fillText(labels[i],Math.min(w-46,Math.max(0,X(i)-14)),h-8))}
+const CH={};
+function chartInit(c,spec){CH[c.id]=spec;c.style.touchAction='pan-y';
+  if(!c._tip){c._tip=1;const go=e=>{const s=CH[c.id];if(!s)return;const r=c.getBoundingClientRect(),x=e.clientX-r.left,step=(s.w-s.p.l-s.p.r)/(s.n-1||1);s.draw(Math.max(0,Math.min(s.n-1,Math.round((x-s.p.l)/step))))};
+    c.addEventListener('pointermove',go);c.addEventListener('pointerdown',go);c.addEventListener('pointerleave',()=>{const s=CH[c.id];if(s)s.draw(-1)})}}
+function ageIdx(labels,age){const nums=labels.map(l=>parseInt(String(l).replace(/\D/g,''),10));if(!nums.length||age<nums[0]||age>nums[nums.length-1])return -1;return nums.findIndex(n=>n>=age)}
+function drawVlines(ctx,vl,labels,X,p,h){(vl||[]).forEach((v,k)=>{const i=ageIdx(labels,v.age);if(i<0)return;const x=X(i);ctx.save();ctx.setLineDash([4,3]);ctx.strokeStyle='#7f94b0';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,p.t);ctx.lineTo(x,h-p.b);ctx.stroke();ctx.restore();
+  ctx.font='11px system-ui';ctx.fillStyle='#cbd9ed';const tw=ctx.measureText(v.label).width,tx=Math.min(x+4,ctx.canvas.clientWidth-p.r-tw);ctx.fillText(v.label,tx,p.t+10+(k%2)*12)})}
+function drawTip(ctx,w,p,x,title,lines){ctx.font='11px system-ui';const pad=7,lh=15;let tw=ctx.measureText(title).width;lines.forEach(l=>{tw=Math.max(tw,ctx.measureText(l.text).width+14)});const bw=tw+pad*2,bh=lines.length*lh+pad*2+lh;
+  let bx=x+12;if(bx+bw>w-2)bx=x-12-bw;if(bx<2)bx=2;const by=p.t+4;ctx.fillStyle='rgba(8,18,34,.94)';ctx.strokeStyle='#4b6585';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect?ctx.roundRect(bx,by,bw,bh,6):ctx.rect(bx,by,bw,bh);ctx.fill();ctx.stroke();
+  ctx.fillStyle='#e8f0fb';ctx.font='600 11px system-ui';ctx.fillText(title,bx+pad,by+pad+9);ctx.font='11px system-ui';lines.forEach((l,k)=>{const y=by+pad+9+lh*(k+1);ctx.fillStyle=l.color||'#9db0c8';ctx.fillRect(bx+pad,y-8,8,8);ctx.fillStyle='#e8f0fb';ctx.fillText(l.text,bx+pad+14,y)})}
+function drawLines(id,series,colors,fmt,labels,o){o=o||{};const c=document.getElementById(id);if(!c)return;
+  const draw=hov=>{const{ctx,w,h}=setupCanvas(c),p={l:62,r:12,t:14,b:32};const vals=series.flatMap(x=>x.values);let lo=Math.min(0,...vals),hi=Math.max(...vals);if(hi===lo)hi=lo+1;const pad=(hi-lo)*.1;lo-=pad;hi+=pad;
+    const n=series[0].values.length,X=i=>p.l+i*(w-p.l-p.r)/(n-1||1),Y=v=>p.t+(hi-v)*(h-p.t-p.b)/(hi-lo);
+    (o.shade||[]).forEach(sh=>{const i0=ageIdx(labels,sh.fromAge),i1=ageIdx(labels,sh.toAge);if(i0<0||i1<0)return;ctx.fillStyle=sh.color||'rgba(255,181,92,.12)';ctx.fillRect(X(i0),p.t,X(i1)-X(i0),h-p.t-p.b);if(sh.label){ctx.font='11px system-ui';ctx.fillStyle='#ffb55c';ctx.fillText(sh.label,X(i0)+4,h-p.b-6)}});
+    axes(ctx,w,h,lo,hi,fmt,p);xLabels(ctx,n,X,w,h,labels);
+    if(o.band&&series.length>1){const A=series[0].values,B=series[1].values;ctx.fillStyle='rgba(157,176,200,.16)';ctx.beginPath();A.forEach((v,i)=>i?ctx.lineTo(X(i),Y(v)):ctx.moveTo(X(i),Y(v)));for(let i=n-1;i>=0;i--)ctx.lineTo(X(i),Y(B[i]));ctx.closePath();ctx.fill();
+      for(let i=1;i<n;i++){const d0=A[i-1]-B[i-1],d1=A[i]-B[i];if(d0*d1<0&&Math.abs(d0)>500&&Math.abs(d1)>500){const t=d0/(d0-d1),xi=X(i-1+t),yi=Y(A[i-1]+(A[i]-A[i-1])*t);ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(xi,yi,4,0,7);ctx.fill();ctx.font='11px system-ui';ctx.fillStyle='#cbd9ed';ctx.fillText('Lines cross',Math.min(xi+6,w-p.r-62),yi-8)}}}
+    series.forEach((s,j)=>{ctx.strokeStyle=colors[j];ctx.lineWidth=2.5;ctx.beginPath();s.values.forEach((v,i)=>i?ctx.lineTo(X(i),Y(v)):ctx.moveTo(X(i),Y(v)));ctx.stroke()});
+    drawVlines(ctx,o.vlines,labels,X,p,h);
+    (o.marks||[]).forEach((m,k)=>{const x=X(m.i),y=Y(series[m.j].values[m.i]);ctx.fillStyle=colors[m.j];ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,5,0,7);ctx.fill();ctx.stroke();
+      ctx.font='11px system-ui';const tw=ctx.measureText(m.text).width;ctx.fillStyle=colors[m.j];ctx.fillText(m.text,Math.max(p.l,Math.min(x-tw/2,w-p.r-tw)),Math.min(h-p.b-6-k*13,y+22+k*13))});
+    if(hov>=0){const x=X(hov);ctx.strokeStyle='#9db0c8';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,p.t);ctx.lineTo(x,h-p.b);ctx.stroke();
+      series.forEach((s,j)=>{ctx.fillStyle=colors[j];ctx.beginPath();ctx.arc(x,Y(s.values[hov]),4,0,7);ctx.fill()});
+      drawTip(ctx,w,p,x,labels[hov],series.map((s,j)=>({color:colors[j],text:((o.names||[])[j]?o.names[j]+': ':'')+(o.tipFmt||money)(s.values[hov])})))}
+    return{w,p,n}};
+  const g=draw(-1);chartInit(c,{n:g.n,p:g.p,w:g.w,draw})}
+function drawStack(id,layers,colors,fmt,labels,o){o=o||{};const c=document.getElementById(id);if(!c)return;
+  const draw=hov=>{const{ctx,w,h}=setupCanvas(c),p={l:62,r:12,t:14,b:32};const n=layers[0].values.length;
+    const tot=Array.from({length:n},(_,i)=>layers.reduce((s,l)=>s+Math.max(0,l.values[i]),0));const hi=Math.max(1,...tot)*1.08;
+    const X=i=>p.l+i*(w-p.l-p.r)/(n-1||1),Y=v=>p.t+(hi-v)*(h-p.t-p.b)/hi;axes(ctx,w,h,0,hi,fmt,p);
+    let base=new Array(n).fill(0);layers.forEach((l,j)=>{const top=base.map((b,i)=>b+Math.max(0,l.values[i]));ctx.fillStyle=colors[j]+'cc';ctx.beginPath();top.forEach((v,i)=>i?ctx.lineTo(X(i),Y(v)):ctx.moveTo(X(i),Y(v)));for(let i=n-1;i>=0;i--)ctx.lineTo(X(i),Y(base[i]));ctx.closePath();ctx.fill();base=top});
+    xLabels(ctx,n,X,w,h,labels);drawVlines(ctx,o.vlines,labels,X,p,h);
+    if(hov>=0){const x=X(hov);ctx.strokeStyle='#e8f0fb';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,p.t);ctx.lineTo(x,h-p.b);ctx.stroke();
+      drawTip(ctx,w,p,x,labels[hov],[...layers.map((l,j)=>({color:colors[j],text:((o.names||[])[j]?o.names[j]+': ':'')+money(l.values[hov])})),{color:'#e8f0fb',text:'Total: '+money(tot[hov])}])}
+    return{w,p,n}};
+  const g=draw(-1);chartInit(c,{n:g.n,p:g.p,w:g.w,draw})}
+function drawWaterfall(id,steps){const c=document.getElementById(id);if(!c)return;const{ctx,w,h}=setupCanvas(c),p={l:12,r:12,t:22,b:44};
+  let run=0;const bars=steps.map(s=>{let from,to;if(s.total){from=0;to=s.value;run=s.value}else{from=run;to=run+s.value;run=to}return{...s,from,to}});
+  const vals=bars.flatMap(b=>[b.from,b.to]);let lo=Math.min(0,...vals),hi=Math.max(...vals);const pad=(hi-lo)*.08;hi+=pad;if(lo<0)lo-=pad;
+  const Y=v=>p.t+(hi-v)*(h-p.t-p.b)/(hi-lo),slot=(w-p.l-p.r)/bars.length,bw=Math.min(64,slot*.62);
+  ctx.strokeStyle='#28405f';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.l,Y(0));ctx.lineTo(w-p.r,Y(0));ctx.stroke();ctx.font='11px system-ui';ctx.textAlign='center';
+  bars.forEach((b,i)=>{const cx=p.l+slot*(i+.5),y1=Y(Math.max(b.from,b.to)),y2=Y(Math.min(b.from,b.to));ctx.fillStyle=b.color;ctx.fillRect(cx-bw/2,y1,bw,Math.max(1.5,y2-y1));
+    if(i<bars.length-1){ctx.strokeStyle='#5d7392';ctx.setLineDash([2,2]);ctx.beginPath();ctx.moveTo(cx+bw/2,Y(b.to));ctx.lineTo(cx+slot-bw/2,Y(b.to));ctx.stroke();ctx.setLineDash([])}
+    ctx.fillStyle='#e8f0fb';ctx.fillText((b.total?'':(b.value<0?'−':'+'))+kfmt(Math.abs(b.value)).replace('−',''),cx,(b.to>=b.from?y1:y2)+(b.to>=b.from?-5:13));
+    ctx.fillStyle='#9db0c8';b.label.split('\n').forEach((t,k)=>ctx.fillText(t,cx,h-p.b+16+k*13))});ctx.textAlign='start'}
+
+const PAL=['#54a8ff','#4dd4a3','#ffb55c','#b78cff','#ff7892','#4fd1d9','#e6d15c','#8aa0bb'];
+function groupSlices(items,minPct){const tot=items.reduce((a,x)=>a+Math.max(0,x.value),0)||1;const big=items.filter(x=>x.value/tot>=minPct),small=items.filter(x=>x.value>0&&x.value/tot<minPct);
+  const out=big.filter(x=>x.value>0).sort((a,b)=>b.value-a.value);if(small.length)out.push({label:'Smaller categories ('+small.length+')',value:small.reduce((a,x)=>a+x.value,0),color:'#8aa0bb'});
+  return out.map((x,i)=>({...x,color:x.color||PAL[i%PAL.length]}))}
+function donutPanel(id,title,badge,slices,center,note){slices=slices.filter(x=>x.value>0);const tot=slices.reduce((a,x)=>a+x.value,0)||1;
+  return`<article class="panel"><h2>${esc(title)}${badge?` <span class="badge">${esc(badge)}</span>`:''}</h2><div class="donutbox"><canvas id="${id}" aria-label="${esc(title)}" data-center='${esc(JSON.stringify(center||{}))}'></canvas><ul class="dleg">${slices.map(x=>`<li><i class="dot" style="background:${x.color}"></i><span class="nm">${esc(x.label)}</span><span class="am">${money(x.value)}</span><span class="pc">${Math.round(x.value/tot*100)}%</span></li>`).join('')}</ul></div>${note?`<p class="foot">${note}</p>`:''}</article>`}
+function drawDonut(id,slices){const c=document.getElementById(id);if(!c)return;slices=slices.filter(x=>x.value>0);const tot=slices.reduce((a,x)=>a+x.value,0),cen=JSON.parse(c.dataset.center||'{}');
+  const draw=hov=>{const{ctx,w,h}=setupCanvas(c),cx=w/2,cy=h/2,R=Math.min(w,h)/2-6,r=R*.62;ctx.textAlign='center';
+    if(!tot){ctx.fillStyle='#9db0c8';ctx.font='12px system-ui';ctx.fillText('Nothing to show',cx,cy);ctx.textAlign='start';return}
+    let a0=-Math.PI/2;slices.forEach((x,i)=>{const a1=a0+x.value/tot*2*Math.PI;ctx.fillStyle=x.color;ctx.beginPath();ctx.arc(cx,cy,i===hov?R+4:R,a0,a1);ctx.arc(cx,cy,r,a1,a0,true);ctx.closePath();ctx.fill();ctx.strokeStyle='#0e1a2e';ctx.lineWidth=2;ctx.stroke();a0=a1});
+    ctx.fillStyle='#e8f0fb';if(hov>=0){const x=slices[hov];ctx.font='600 17px system-ui';ctx.fillText(Math.round(x.value/tot*100)+'%',cx,cy-2);ctx.font='11px system-ui';ctx.fillStyle='#9db0c8';ctx.fillText(money(x.value),cx,cy+14);const t=x.label.length>20?x.label.slice(0,19)+'…':x.label;ctx.fillText(t,cx,cy+28)}
+    else{ctx.font='600 17px system-ui';ctx.fillText(cen.big||money(tot),cx,cy+2);ctx.font='11px system-ui';ctx.fillStyle='#9db0c8';ctx.fillText(cen.small||'total',cx,cy+18)}
+    ctx.textAlign='start'};
+  draw(-1);c.style.touchAction='pan-y';c._dn={slices,tot,draw};
+  if(!c._h){c._h=1;const go=e=>{const d=c._dn,b=c.getBoundingClientRect(),x=e.clientX-b.left-b.width/2,y=e.clientY-b.top-b.height/2,R=Math.min(b.width,b.height)/2-6,dist=Math.hypot(x,y);let i=-1;
+      if(dist>=R*.62&&dist<=R+6){let a=Math.atan2(y,x)+Math.PI/2;if(a<0)a+=2*Math.PI;let acc=0;for(let k=0;k<d.slices.length;k++){acc+=d.slices[k].value/d.tot*2*Math.PI;if(a<=acc){i=k;break}}}d.draw(i)};
+    c.addEventListener('pointermove',go);c.addEventListener('pointerdown',go);c.addEventListener('pointerleave',()=>c._dn.draw(-1))}}
+const kfmt=v=>(v<0?'−$':'$')+(Math.abs(v)>=1e6?(Math.abs(v)/1e6).toFixed(1)+'M':Math.round(Math.abs(v)/1000)+'k');
+
+/* ---------- tabs ---------- */
+function setTab(t){app.tab=t;document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));({snapshot:viewSnapshot,decisions:viewDecisions,retirement:viewRetirement,backup:viewBackup})[t]()}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+$('#btnExport').onclick=exportBackup;$('#btnImport').onclick=()=>$('#fileImport').click();
+$('#fileImport').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>importBackupText(String(r.result));r.onerror=()=>alert('Could not read file.');r.readAsText(f);e.target.value=''};
+window.addEventListener('resize',()=>{if(app.tab==='snapshot'&&$('#wfChart')){drawSnapWaterfall();drawSnapDonuts()}if(app.tab==='decisions')drawDecisionCharts();if(app.tab==='retirement')drawRetireCharts()});
+
+/* ---------- readiness banner / plan diff ---------- */
+const HELP={
+ cash:[['cashReserves','Cash today'],['takeHome','Take-home pay'],['recurringSpend','Spending'],['oneTimeY1','One-time costs'],['contributions','Contributions']],
+ run:[['retireAge','Retirement age'],['retireSpend','Retirement spending'],['contributions','Contributions'],['recurringSpend','Spending'],['ssAge','Social Security age']],
+ spend:[['recurringSpend','All-in spending'],['spendBasis','Spending basis'],['takeHome','Take-home pay'],['contributions','Contributions']],
+ reserve:[['recurringSpend','Raise all-in estimate'],['resOther','Trim reserve items'],['homeTax','Property tax']]};
+const tryLinks=(set)=>set.map(([k,l])=>goLink('[data-k="'+k+'"]',l)).join(' · ');
+const goLink=(sel,txt)=>`<a href="#" class="golink" data-goto="${esc(sel)}">${esc(txt)}</a>`;
+function bannerHTML(hc){const diffs=hc.changes?goLink('#diffOut',hc.changes+' input(s)'):'';
+  if(hc.ready)return`<div class="banner yes"><strong>Decision-ready</strong><div class="hint">No blocking issues found.${hc.changes?` ${diffs} differ from the reference plan.`:''}</div></div>`;
+  const li=hc.blocking.map((b,i)=>b.startsWith('Still to confirm')&&hc.unconfirmed?'Still to confirm: '+hc.unconfirmed.map(([k,l])=>goLink(CHECK_INPUT[k]||'[data-chk="'+k+'"]',l)).join('; '):(hc.fixes&&hc.fixes[i]?goLink(hc.fixes[i],b):esc(b))+(hc.helps&&hc.helps[i]?' <span class="hint">Adjust: '+tryLinks(HELP[hc.helps[i]])+'</span>':''));
+  return`<div class="banner no"><strong>Not decision-ready</strong><ul>${li.map(x=>`<li>${x}</li>`).join('')}</ul>${hc.changes?`<div class="hint">${diffs} also differ from the reference plan (see Snapshot).</div>`:''}</div>`}
+const CHECK_INPUT={mortgage:'[data-k="newMortgageRate"]',wagnerTax:'[data-k="homeTax"]',homeIns:'[data-k="homeIns"]',utilities:'[data-k="resUtilities"]',maintenance:'[data-k="resMaint"]',flooring:'[data-k="oneTimeY1"]',vehicle:'@vehicle'};
+function flash(el){const t=el.closest('.field,.chk,tr,.panel')||el;t.classList.add('flash');setTimeout(()=>t.classList.remove('flash'),1800)}
+function goVehicle(){let d=app.decisions.find(x=>x.type==='vehicle');if(!d){d=newDecision(app.baseline,'vehicle','Vehicle replacement');app.decisions.push(d)}app.activeId=d.id;persist();setTab('decisions');
+  const el=document.querySelector('#controls');if(el){el.scrollIntoView({block:'center',behavior:'smooth'});flash(el)}}
+function goTo(sel){if(sel==='@vehicle')return goVehicle();if(app.tab!=='snapshot')setTab('snapshot');const el=document.querySelector('#view '+sel)||document.querySelector(sel);if(!el)return;
+  for(let d=el.closest('details');d;d=d.parentElement&&d.parentElement.closest('details'))d.open=true;
+  el.scrollIntoView({block:'center',behavior:'smooth'});if(el.focus)try{el.focus({preventScroll:true})}catch(e){}
+  const t=el.closest('.field,.chk,tr')||el;t.classList.add('flash');setTimeout(()=>t.classList.remove('flash'),1800)}
+document.addEventListener('click',e=>{const a=e.target.closest('[data-goto]');if(!a)return;e.preventDefault();goTo(a.dataset.goto)});
+function diffPanelHTML(B){const d=planDiffs(B);if(!d.length)return'<div class="hint">Every snapshot input matches the reference plan.</div>';
+  return`<div class="table-wrap"><table class="t small"><thead><tr><th>Input</th><th>Reference plan</th><th>Now</th></tr></thead><tbody>${d.map(x=>`<tr><td><a href="#" class="golink" data-goto="[data-k=&quot;${esc(x.key)}&quot;]">${esc(x.label)}</a> <span class="hint">· ${esc(x.group)}</span></td><td>${esc(fmtVal(x.unit,x.plan))}</td><td style="color:var(--orange)">${esc(fmtVal(x.unit,x.now))}</td></tr>`).join('')}</tbody></table></div>`}
+function refreshChanged(){const defs=Object.fromEntries(BASELINE_DEFS.map(d=>[d[0],d]));
+  document.querySelectorAll('#view .field').forEach(f=>{const el=f.querySelector('[data-k]');if(!el)return;const d=defs[el.dataset.k];if(!d)return;const now=parseFloat(el.value),chg=Number.isFinite(now)&&Math.abs(now-d[4])>1e-9;
+    f.classList.toggle('chg',chg);let pl=f.querySelector('.plan');if(chg){if(!pl){pl=document.createElement('div');pl.className='plan';f.appendChild(pl)}pl.textContent='Reference plan: '+fmtVal(d[3],d[4])}else if(pl)pl.remove()});
+  const dp=$('#diffOut');if(dp)dp.innerHTML=diffPanelHTML(app.baseline);const sm=$('#diffCount');if(sm)sm.textContent=planDiffs(app.baseline).length}
+
+/* ---------- shared field component ---------- */
+const suffixOf=u=>(u==='%'||u==='%/yr')?'%':(u==='yr'?'yr':'');
+function snapField([k,,label,unit,,hint],val){
+  if(unit==='basis')return`<div class="field" style="grid-column:1/-1;grid-template-columns:1fr minmax(0,320px)"><label for="b-${k}">${esc(label)}</label><select id="b-${k}" data-k="${k}"><option value="0" ${val===0?'selected':''}>All-in working estimate (taxes and insurance included)</option><option value="1" ${val===1?'selected':''}>Detailed category build (adds property tax + insurance)</option></select><div class="hint">${esc(hint)}</div></div>`;const pre=unit.startsWith('$'),sfx=suffixOf(unit),cl=pre?'inp':'inp sfx';
+  return`<div class="field"><label for="b-${k}">${esc(label)}${unit==='$/yr'?' <span class="hint">per year</span>':unit==='$/mo'?' <span class="hint">per month</span>':''}</label><div class="${cl}"><span class="u">${pre?'$':sfx}</span><input id="b-${k}" type="number" step="any" data-k="${k}" value="${val}"></div>${hint?`<div class="hint">${esc(hint)}</div>`:''}</div>`}
+function paramField([k,l,min,max,step,kind],val){
+  if(kind==='bool')return`<label class="switch"><input type="checkbox" data-key="${k}" ${val?'checked':''}> ${esc(l)}</label>`;
+  return`<div class="field"><label for="n-${k}">${esc(l)}</label><input id="n-${k}" data-key="${k}" type="number" min="${min}" max="${max}" step="${step}" value="${val}"><input aria-label="Adjust ${esc(l)}" data-key="${k}" type="range" min="${min}" max="${max}" step="${step}" value="${val}"></div>`}
+
+/* ---------- Planning reserve ---------- */
+function reserveBodyHTML(){const defs=Object.fromEntries(BASELINE_DEFS.map(d=>[d[0],d]));
+  return`<div id="resOut"></div><div class="table-wrap"><table class="t small"><thead><tr><th>Cost (per year)</th><th>Amount</th><th>Confirmed?</th></tr></thead><tbody>${RESERVE_LINES.map(([k,label,ck])=>`<tr><td>${esc(label)}<div class="hint">${esc(defs[k][5])}</div></td><td><div class="inp"><span class="u">$</span><input type="number" step="any" data-k="${k}" value="${app.baseline.values[k]}" aria-label="${esc(label)} per year"></div></td><td>${ck?`<label class="chk" style="justify-content:flex-end"><input type="checkbox" data-chk="${ck}" ${app.baseline.checks[ck]?'checked':''}> confirmed</label>`:'<span class="hint">estimate</span>'}</td></tr>`).join('')}</tbody></table></div>
+  <p class="hint" style="margin:10px 0 12px">The all-in estimate already contains this reserve, so entering a cost here moves money from “unallocated” to “allocated”; it does not raise all-in spending. The detailed build adds these costs on top of its categories. Replace estimates with confirmed amounts as bills and quotes arrive, and tick “confirmed”. If allocated costs exceed the reserve, the all-in estimate is too low.</p>`}
+function reserveOut(){const el=$('#resOut');if(!el)return;const r=reserveSummary(app.baseline);
+  el.innerHTML=`<section class="kpis" style="margin-top:0"><div class="card"><div class="kpi-label">Starting reserve (all-in less detailed subtotal)</div><div class="kpi-value">${money(r.start)}</div></div><div class="card"><div class="kpi-label">Replaced by confirmed costs</div><div class="kpi-value pos">${money(r.confirmed)}</div></div><div class="card"><div class="kpi-label">Allocated to estimates</div><div class="kpi-value">${money(r.estimated)}</div></div><div class="card"><div class="kpi-label">Reserve remaining</div><div class="kpi-value ${r.remaining<-0.5?'neg':''}">${money(r.remaining)}</div><span class="badge">${r.remaining<-0.5?'over the reserve':'still unallocated'}</span>${r.remaining<-0.5?`<div class="hint">Adjust: ${tryLinks(HELP.reserve)}</div>`:''}</div></section>`;
+  const rs=[{label:'Confirmed costs',value:r.confirmed,color:'#4dd4a3'},{label:'Estimated costs',value:r.estimated,color:'#ffb55c'},{label:'Still unallocated',value:Math.max(0,r.remaining),color:'#5d7392'}];
+  el.insertAdjacentHTML('beforeend',donutPanel('dnRes','How the planning reserve is used','per year',rs,{big:money(r.start),small:'reserve'},r.remaining<-0.5?'Allocated costs exceed the reserve by '+money(-r.remaining)+'.':''));drawDonut('dnRes',rs)}
+
+/* ---------- Snapshot ---------- */
+function viewSnapshot(){
+  const groups=[...new Set(BASELINE_DEFS.map(d=>d[1]))],open={Household:0,Income:1,Spending:1,'Planning reserve':1,'Spending detail':0,'Savings & investments':1,'Home & mortgage':1,Retirement:0,'Taxes & account access':0};
+  let h=`<div id="snapBanner"></div><div id="snapOut"></div><article class="panel chartbox" style="margin-bottom:14px"><h2>Where the money goes <span class="badge">year 1, per year</span></h2><canvas id="wfChart" aria-label="Income waterfall from gross pay to money left over"></canvas><p class="foot">Taxes &amp; deductions = gross less the take-home you entered. Saving is shown as an allocation, not an expense.</p></article><div class="charts" id="snapDonuts" style="margin-bottom:14px"></div>
+  <details class="card-sec" open><summary>Still to confirm before relying on this</summary><div class="body">${CHECKS.filter(c=>!RESERVE_LINES.some(r=>r[2]===c[0])).map(([k,l])=>`<label class="chk"><input type="checkbox" data-chk="${k}" ${app.baseline.checks[k]?'checked':''}> ${esc(l)}</label>`).join('')}<div class="hint" style="margin-bottom:10px">Tick each one once it is a final number you have entered. Unticked items keep the planner at “Not decision-ready”.</div></div></details>
+  <details class="card-sec" ${planDiffs(app.baseline).length?'open':''}><summary><span>Changed from the reference plan (<span id="diffCount">${planDiffs(app.baseline).length}</span>)</span></summary><div class="body" id="diffOut">${diffPanelHTML(app.baseline)}</div></details>
+  <div class="row"><span class="hint">Everything here feeds every decision and the retirement timeline. Edits save automatically.</span><span class="badge" id="saveStatus">${esc(saveText())}</span></div>`;
+  for(const g of groups){h+=`<details class="card-sec" ${open[g]?'open':''}><summary>${esc(g)}</summary><div class="body">${g==='Spending detail'?'<div id="spendOut"></div>':''}${g==='Planning reserve'?reserveBodyHTML():`<div class="fgrid">${BASELINE_DEFS.filter(d=>d[1]===g).map(d=>snapField(d,app.baseline.values[d[0]])).join('')}</div>`}</div></details>`}
+  h+=`<div class="row"><button class="btn danger" id="resetBase">Reset snapshot to defaults</button></div>`;
+  $('#view').innerHTML=h;
+  $('#view').oninput=e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;const n=parseFloat(e.target.value);if(!Number.isFinite(n))return;app.baseline.values[k]=n;persist();snapOut();refreshChanged()};
+  $('#view').onchange=e=>{const c=e.target.dataset&&e.target.dataset.chk;if(!c)return;app.baseline.checks[c]=e.target.checked;persist();snapOut()};
+  $('#resetBase').onclick=()=>{if(confirm('Reset every snapshot input to the original defaults?')){app.baseline=defaultBaseline();persist();viewSnapshot()}};
+  snapOut();refreshChanged();
+}
+function drawSnapDonuts(){const el=$('#snapDonuts');if(!el)return;const v=valuesOf(app.baseline),ss=spendSummary(v),r=reserveSummary(app.baseline),spend=annualSpend(v,1),left=v.takeHome-spend-v.contributions;
+  const alloc=groupSlices([{label:'Spending',value:spend,color:'#ffb55c'},{label:'Investing',value:v.contributions,color:'#b78cff'},{label:'Left over',value:Math.max(0,left),color:'#4dd4a3'}],0);
+  const cat=[...ss.rows.map(([l,m])=>({label:l,value:m*12})),{label:'Mortgage P&I',value:ss.mortgage},{label:'Property tax, insurance, utilities, upkeep (allocated)',value:ss.taxIns}];
+  if(v.spendBasis!==1)cat.push({label:'Unallocated planning reserve',value:Math.max(0,ss.reserveLeft),color:'#5d7392'});
+  const cs=groupSlices(cat,.02);
+  el.innerHTML=donutPanel('dnAlloc','Where take-home goes','year 1',alloc,left<0?{big:money(spend+v.contributions),small:'spending + saving'}:{big:money(v.takeHome),small:'take-home'},left<0?'Spending plus saving is '+money(-left)+' more than the '+money(v.takeHome)+' take-home, so this ring is larger than take-home.':'Investing is a transfer to your own accounts, not consumption.')+donutPanel('dnCat','Recurring spending by category','per year',cs,{big:money(cs.reduce((a,x)=>a+x.value,0)),small:'recurring'},'Excludes one-time items such as one-time costs. '+(v.spendBasis===1?'Detailed category basis.':'All-in basis: the unallocated reserve is the part of the estimate not yet assigned to a cost.'));
+  drawDonut('dnAlloc',alloc);drawDonut('dnCat',cs)}
+function drawSnapWaterfall(){const v=valuesOf(app.baseline),gross=v.chrisGross+v.annieGross,spend=annualSpend(v,1),left=v.takeHome-spend-v.contributions;
+  drawWaterfall('wfChart',[{label:'Gross\nsalary',value:gross,total:1,color:'#54a8ff'},{label:'Taxes &\ndeductions',value:-(gross-v.takeHome),color:'#ff7892'},{label:'Take-home',value:v.takeHome,total:1,color:'#54a8ff'},{label:'Spending',value:-spend,color:'#ffb55c'},{label:'Investing',value:-v.contributions,color:'#b78cff'},{label:left<0?'Shortfall':'Left over',value:left,total:1,color:left<0?'#ff7892':'#4dd4a3'}])}
+function snapOut(){
+  const v=valuesOf(app.baseline),pay=pmt(v.newMortgage,v.newMortgageRate,v.newMortgageTerm),gross=v.chrisGross+v.annieGross;
+  const ss=spendSummary(v),spend=annualSpend(v,1)-(v.spendBasis===1?0:0),surplus=v.takeHome-spend-v.contributions;
+  const invest=v.taxableAcct+v.retirementAcct,nw=v.cashReserves+invest+v.homeValue-v.newMortgage,sim=simulate(app.baseline,null),m=metrics(sim,20);
+  $('#snapOut').innerHTML=`<section class="kpis"><div class="card"><div class="kpi-label">Monthly take-home</div><div class="kpi-value">${money(v.takeHome/12)}</div><span class="badge">of ${money(gross)}/yr gross</span></div>
+  <div class="card"><div class="kpi-label">Monthly spending (${v.spendBasis===1?'category build':'all-in estimate'})</div><div class="kpi-value">${money(spend/12)}</div><span class="badge">+${money(v.oneTimeY1)} one-time in year 1</span></div>
+  <div class="card"><div class="kpi-label">Left after spending and saving</div><div class="kpi-value ${cls(surplus)}">${sgn(surplus/12)}<span class="hint"> /mo</span></div><span class="badge">saving ${money(v.contributions/12)}/mo</span>${surplus<-0.5?`<div class="hint">Spending plus saving exceeds take-home. Adjust: ${tryLinks(HELP.spend)}</div>`:''}</div>
+  <div class="card"><div class="kpi-label">Net worth today</div><div class="kpi-value">${money(nw)}</div><span class="badge">mortgage P&amp;I ${money(v.mortgagePmt)}/mo</span></div></section>
+  <div class="notice ${m.depletionAge?'bad':'good'}">${m.depletionAge?`With this snapshot alone, savings run out at age ${m.depletionAge}.`:`With this snapshot alone, retirement at ${v.retireAge} is funded through age ${v.horizonAge}.`} Lowest cash while working: ${money(m.lowCash)} (${m.lowCashWhen}).${m.lowCash<0?` <span class="hint">Adjust: ${tryLinks(HELP.cash)}</span>`:''}${m.depletionAge?` <span class="hint">Adjust: ${tryLinks(HELP.run)}</span>`:''} At ${v.retireAge} you’d have ${money(m.accessibleAtRetire)} of accessible savings plus ${money(m.retirementAtRetire)} in retirement accounts.</div>`;
+  drawSnapWaterfall();drawSnapDonuts();reserveOut();const sb=$('#snapBanner');if(sb)sb.innerHTML=bannerHTML(healthCheck(app.baseline));
+  const so=$('#spendOut');if(so)so.innerHTML=`<div class="table-wrap"><table class="t small"><thead><tr><th>Two separate bases (never add them together)</th><th>Per month</th><th>Per year</th></tr></thead><tbody>
+   <tr><td colspan="3"><strong>1. Detailed category build</strong></td></tr>
+   <tr><td>Non-housing categories, excluding travel</td><td>${money(ss.nonHousingExTravel/12)}</td><td>${money(ss.nonHousingExTravel)}</td></tr>
+   <tr><td>Travel reserve</td><td>${money(ss.travelAnnual/12)}</td><td>${money(ss.travelAnnual)}</td></tr>
+   <tr><td>New-home mortgage, principal + interest</td><td>${money(ss.mortgage/12)}</td><td>${money(ss.mortgage)}</td></tr>
+   <tr><td>Subtotal before property tax &amp; insurance</td><td>${money(ss.ongoing/12)}</td><td>${money(ss.ongoing)}</td></tr>
+   <tr><td>Planning-reserve items (tax, insurance, utilities, maintenance, other)</td><td>${money(ss.taxIns/12)}</td><td>${money(ss.taxIns)}</td></tr>
+   <tr><td><strong>Detailed build total</strong></td><td>${money(ss.detailed/12)}</td><td>${money(ss.detailed)}</td></tr>
+   <tr><td>First year incl. ${money(v.oneTimeY1)} one-time costs</td><td></td><td>${money(ss.firstYearDetailed)}</td></tr>
+   <tr><td colspan="3"><strong>2. All-in working estimate</strong> (property tax, insurance, utilities, maintenance included)</td></tr>
+   <tr><td><strong>All-in estimate total</strong></td><td>${money(ss.whole/12)}</td><td>${money(ss.whole)}</td></tr>
+   <tr><td class="hint">Planning reserve / coverage gap inside it (vs. the subtotal before tax &amp; insurance)</td><td></td><td>${money(ss.gap)}</td></tr>
+   <tr><td class="hint">Reserve left after the items above</td><td></td><td class="${ss.reserveLeft>=0?'':'neg'}">${money(ss.reserveLeft)}</td></tr></tbody></table></div>
+   <p class="hint" style="margin:10px 0 12px">Aggregate assumptions only; no transaction data is stored. The planning reserve is not an extra expense: it is the part of the all-in estimate that covers property tax, insurance, utilities, maintenance and anything not yet in a category. Use one basis at a time.</p>`;
+}
+
+/* ---------- Decisions ---------- */
+const active=()=>app.decisions.find(d=>d.id===app.activeId)||app.decisions[0];
+let dstate=null,dres=null;
+function viewDecisions(){
+  const d=active();app.activeId=d.id;const T=TYPES[d.type];
+  const B=decisionBaseline(d,app.baseline);dstate=decisionState(d,B);
+  let h=`<div class="decs">${app.decisions.map(x=>`<button class="dec" data-id="${x.id}" aria-pressed="${x.id===d.id}"><span class="nm">${esc(x.name)}</span><small>${esc(TYPES[x.type].label)}</small></button>`).join('')}</div>
+  <div class="row"><label>New decision <select id="newType">${Object.entries(TYPES).map(([k,t])=>`<option value="${k}">${esc(t.label)}</option>`).join('')}</select></label><button class="btn" id="newDec">Add</button><button class="btn" id="dupDec">Duplicate this</button><button class="btn danger" id="delDec">Delete this</button></div>
+  <article class="panel" style="margin-bottom:16px"><div class="row" style="margin-bottom:6px"><label>Name <input type="text" id="decName" value="${esc(d.name)}"></label><label><input type="checkbox" id="useSaved" ${d.useSavedBaseline?'checked':''}> Use the snapshot saved with this decision</label><button class="btn" id="refreshSnap">Update saved snapshot to current</button><span class="badge" id="saveStatus">${esc(saveText())}</span></div><div class="hint">${esc(T.blurb)} <span id="baseStatus"></span></div><div class="hint" id="ovrOut" style="margin-top:6px"></div></article>
+  <div id="healthBanner"></div><div id="verdict"></div>
+  <article class="panel"><h2 id="cmpTitle">Comparison</h2><div class="table-wrap" id="compare"></div><p class="foot">Nominal dollars. Net worth is before income tax on existing retirement and taxable balances; sale and investment-gain taxes on the decision itself are deducted. Negative cash means a transfer from investments would be needed.</p></article>
+  <article class="panel" style="margin-top:16px"><h2>Sensitivity <span class="badge">how fragile is the answer?</span></h2><div id="sensOut" class="table-wrap"><span class="hint">Calculating…</span></div></article>
+  <div class="charts" style="margin-top:16px"><article class="panel chartbox"><h2>Net worth over time</h2><div class="legend" id="nwLegend"></div><canvas id="nwChart" aria-label="Net worth by option"></canvas></article><article class="panel chartbox"><h2>Liquid savings over time</h2><div class="legend" id="liqLegend"></div><canvas id="liqChart" aria-label="Liquid savings by option"></canvas></article></div>
+  <div class="grid" style="margin-top:16px"><aside class="panel assumptions"><h2>Assumptions</h2>${T.presets?'<div class="row"><button class="btn" id="workbook">Load workbook scenario</button></div>':''}<div class="row"><button class="btn" id="reset">Reset to defaults</button></div><p class="hint" id="presetNote"></p><div id="controls"></div></aside><section class="results" id="extras"></section></div>`;
+  $('#view').innerHTML=h;
+  document.querySelectorAll('.dec').forEach(b=>b.onclick=()=>{app.activeId=b.dataset.id;persist();viewDecisions()});
+  $('#newDec').onclick=()=>{const t=$('#newType').value,c=app.decisions.filter(x=>x.type===t).length,n=newDecision(app.baseline,t,TYPES[t].label+(c?' '+(c+1):''));app.decisions.push(n);app.activeId=n.id;persist();viewDecisions()};
+  $('#dupDec').onclick=()=>{const n=newDecision(app.baseline,d.type,d.name+' (copy)');Object.assign(n,{workbookMode:d.workbookMode,overrides:{...d.overrides},baselineSnapshot:clone(d.baselineSnapshot),useSavedBaseline:d.useSavedBaseline});app.decisions.push(n);app.activeId=n.id;persist();viewDecisions()};
+  $('#delDec').onclick=()=>{if(app.decisions.length<2){alert('Keep at least one decision.');return}if(confirm('Delete “'+d.name+'”?')){app.decisions=app.decisions.filter(x=>x!==d);app.activeId=app.decisions[0].id;persist();viewDecisions()}};
+  $('#decName').oninput=e=>{d.name=e.target.value||'Untitled';touch(d);document.querySelector(`.dec[data-id="${d.id}"] .nm`).textContent=d.name};
+  $('#useSaved').onchange=e=>{d.useSavedBaseline=e.target.checked;touch(d);viewDecisions()};
+  $('#refreshSnap').onclick=()=>{d.baselineSnapshot=clone(app.baseline);touch(d);viewDecisions()};
+  if($('#workbook'))$('#workbook').onclick=()=>{d.workbookMode=true;d.overrides={};touch(d);viewDecisions()};
+  $('#reset').onclick=()=>{d.workbookMode=false;d.overrides={};touch(d);viewDecisions()};
+  renderControls();decisionOut();
+}
+function touch(d){d.updated=new Date().toISOString();persist()}
+function renderControls(){
+  const d=active(),T=TYPES[d.type];
+  $('#controls').innerHTML=T.groups.map(([name,fields])=>`<section class="section"><h3>${esc(name)}</h3>${fields.map(f=>paramField(f,dstate[f[0]])).join('')}</section>`).join('');
+  $('#presetNote').textContent=T.presets?((d.workbookMode?'Workbook preset active. ':'Project defaults active. ')+'The workbook preset uses its own rent, tax, depreciation, brokerage-return and financing figures.'):'Defaults follow your Snapshot; anything you change here is saved with this decision.';
+  const defaults=()=>decisionDefaults(d,decisionBaseline(d,app.baseline));
+  const apply=(k,val)=>{dstate[k]=val;d.overrides=diffOverrides(dstate,defaults());touch(d);decisionOut()};
+  document.querySelectorAll('#controls [data-key]').forEach(el=>{
+    if(el.type==='checkbox')el.addEventListener('change',e=>apply(e.target.dataset.key,e.target.checked));
+    else el.addEventListener('input',e=>{const k=e.target.dataset.key,n=parseFloat(e.target.value);if(!Number.isFinite(n))return;document.querySelectorAll(`#controls [data-key="${k}"]`).forEach(x=>{if(x!==e.target)x.value=n});apply(k,n)})});
+}
+function decisionOut(){
+  const d=active();dres=runDecision(d,app.baseline);const{built,mets,H,v}=dres,[A,Bo]=built.options,[mA,mB]=mets;
+  const changed=JSON.stringify(normalizeBaseline(d.baselineSnapshot).values)!==JSON.stringify(app.baseline.values);
+  $('#baseStatus').textContent=(d.useSavedBaseline?'Using the saved snapshot':'Using your current snapshot')+(changed?' — it differs from this decision’s saved snapshot.':' — matches the saved snapshot.');
+  $('#healthBanner').innerHTML=bannerHTML(healthCheck(dres.B,dres.sims.map((s,i)=>({name:built.options[i].name,sim:s}))));
+  {const defs=decisionDefaults(d,dres.B),lab={};TYPES[d.type].groups.forEach(([,fs])=>fs.forEach(f=>lab[f[0]]=f[1]));const ks=Object.keys(d.overrides);
+   $('#ovrOut').innerHTML=ks.length?'<span style="color:var(--orange)">Changed from this decision’s defaults:</span> '+ks.map(k=>esc(lab[k]||k)+' ('+esc(String(defs[k]))+' → '+esc(String(d.overrides[k]))+')').join('; '):'All assumptions are at their defaults.'}
+  scheduleSensitivity();
+  const dNW=mB.terminalNW-mA.terminalNW,dLow=mB.lowCash-mA.lowCash;
+  const neg=mA.lowCash<0||mB.lowCash<0?' Cash goes negative on '+(mA.lowCash<0&&mB.lowCash<0?'both options':mA.lowCash<0?esc(A.name):esc(Bo.name))+'.'+' <span class="hint">Adjust: '+tryLinks(HELP.cash)+'</span>':'';
+  $('#verdict').innerHTML=`<div class="notice ${Math.abs(dNW)<1000?'':'good'}"><strong>${Math.abs(dNW)<1000?'Roughly even on net worth':esc(dNW>=0?Bo.name:A.name)+' is ahead by '+money(Math.abs(dNW))}</strong> at year ${H}. Lowest cash is ${money(Math.abs(dLow))} ${dLow>=0?'higher':'lower'} under ${esc(Bo.name)} than under ${esc(A.name)}.${neg}</div>`;
+  $('#cmpTitle').textContent=`${A.name} vs. ${Bo.name}`;
+  const row=(label,a,b,fmt)=>`<tr><td>${label}</td><td>${fmt(a)}</td><td>${fmt(b)}</td><td class="${cls(b-a)}">${sgn(b-a)}</td></tr>`;
+  const txt=(label,a,b)=>`<tr><td class="sub-row">${label}</td><td>${a}</td><td>${b}</td><td></td></tr>`;
+  const out=m=>m.depletionAge?`Runs out at ${m.depletionAge}`:`Funded to ${v.horizonAge}`;
+  $('#compare').innerHTML=`<table class="t"><thead><tr><th>Measure</th><th>${esc(A.name)}</th><th>${esc(Bo.name)}</th><th>Difference</th></tr></thead><tbody>
+   ${row('Monthly cash flow, year 1',mA.monthlyY1,mB.monthlyY1,money)}
+   ${row('Lowest cash balance while working',mA.lowCash,mB.lowCash,money)}${txt('when it happens',mA.lowCashWhen,mB.lowCashWhen)}
+   ${row(`Accessible savings at ${v.retireAge} (cash + taxable)`,mA.accessibleAtRetire,mB.accessibleAtRetire,money)}
+   ${row(`Retirement accounts at ${v.retireAge}`,mA.retirementAtRetire,mB.retirementAtRetire,money)}
+   ${row(`Home &amp; other equity at ${v.retireAge} (not accessible)`,mA.homeAtRetire,mB.homeAtRetire,money)}
+   ${row(`Net worth at year ${H} (age ${mA.terminalAge})`,mA.terminalNW,mB.terminalNW,money)}
+   ${txt('Retirement funding',out(mA),out(mB))}
+   ${row('Funding gap before Social Security (today’s $)',mA.gapReal,mB.gapReal,money)}
+   </tbody></table>`;
+  $('#nwLegend').innerHTML=`<span><i class="dot" style="background:var(--blue)"></i>${esc(A.name)}</span><span><i class="dot" style="background:var(--green)"></i>${esc(Bo.name)}</span>`;
+  $('#liqLegend').innerHTML=$('#nwLegend').innerHTML;
+  const ex=$('#extras');if(d.type==='reinhart')reinhartExtras(ex,dres);else genericExtras(ex,d,dres);
+  drawDecisionCharts();
+}
+let sensTimer=null;
+function scheduleSensitivity(){clearTimeout(sensTimer);sensTimer=setTimeout(renderSensitivity,200)}
+function renderSensitivity(){const el=$('#sensOut');if(!el)return;const d=active(),res=sensitivity(d,app.baseline);if(!res){el.innerHTML='<span class="hint">Not available for this decision type.</span>';return}
+  const[A,B]=dres.built.options,f=x=>(Math.abs(x)<500?'≈ even':(x>0?esc(B.name)+' ':esc(A.name)+' ')+money(Math.abs(x)));
+  el.innerHTML=`<p class="hint">Net worth lead at year ${dres.H}, varying one assumption at a time. “Flips” means the better option changes.</p><table class="t small"><thead><tr><th>Assumption</th><th>Change</th><th>Low case</th><th>Base</th><th>High case</th><th>Swing</th><th>Flips?</th></tr></thead><tbody>${res.rows.map(r=>`<tr><td>${esc(r.label)}</td><td>${esc(r.spec)}</td><td>${f(r.lo.nw)}</td><td>${f(res.base.nw)}</td><td>${f(r.hi.nw)}</td><td>${money(r.swing)}</td><td class="${r.flips?'neg':''}">${r.flips?'Yes':'No'}</td></tr>`).join('')}</tbody></table>`}
+function drawDecisionCharts(){if(!dres||!$('#nwChart'))return;const lab=dres.sims[0].rows.map(r=>'Age '+r.age);
+  const nm=dres.built.options.map(o=>o.name);drawLines('nwChart',dres.sims.map(s=>({values:s.rows.map(r=>r.nw)})),['#54a8ff','#4dd4a3'],kfmt,lab,{names:nm,band:true});
+  drawLines('liqChart',dres.sims.map(s=>({values:s.rows.map(r=>r.cash+r.taxable+r.sleeve+r.retirement)})),['#54a8ff','#4dd4a3'],kfmt,lab,{names:nm,marks:dres.sims.map((s,j)=>{const wk=s.rows.map((r,i)=>[r,i]).filter(([r])=>r.phase!=='retired');if(!wk.length)return null;const[r,i]=wk.reduce((m,x)=>x[0].cash<m[0].cash?x:m);return{j,i,text:'Lowest cash '+kfmt(dres.mets[j].lowCash)+' · '+dres.mets[j].lowCashWhen}}).filter(Boolean)});
+  if(dres.built.extra.rows&&$('#valueChart')){const r=dres.built.extra.rows,l=r.map(x=>'Yr '+x.y);
+    drawLines('valueChart',[{values:r.map(x=>x.rentalTerminal)},{values:r.map(x=>x.investTerminal)}],['#4dd4a3','#54a8ff'],kfmt,l);
+    drawLines('cashChart',[{values:r.map(x=>x.net)},{values:r.map(x=>x.reinhBal)}],['#ffb55c','#ff7892'],kfmt,l)}}
+function genericExtras(ex,d,res){
+  const{built,p}=res;let notes='';
+  if(d.type==='paydown'){const e=built.extra;notes=`<li>Starting payment ${money(e.p0)}/mo. ${p.recast?`After the paydown it drops to ${money(e.pRed)}/mo, saving ${money(e.p0-e.pRed)}/mo.`:'The payment stays the same, so the loan is paid off early.'}</li><li>Paying down is a guaranteed return equal to the mortgage rate (${pct(res.v.newMortgageRate)}); investing is a risky return (${pct(p.investReturn)} assumed, gains taxed at the end).</li><li>Paying down adds home equity, which is not accessible before retirement; investing keeps the money liquid.</li>`}
+  else if(d.type==='vehicle')notes=`<li>Cash out of pocket = price − trade-in − financed amount, paid in the purchase year; loan payments run through the loan term.</li><li>The new car is counted as an asset that loses ${p.depreciation}%/yr; the old car is counted at its trade-in value until replaced.</li><li>Defaults are placeholders — enter real quotes and trade-in values.</li>`;
+  else notes=`<li>One-time costs are paid in cash in the chosen year; the “kept as an asset” share counts toward net worth and loses value each year.</li><li>Yearly change is added to household cash flow (income or savings positive, costs negative).</li><li>A lump sum invested is assumed to be extra cash and grows at the shared return.</li>`;
+  ex.innerHTML=`<article class="panel"><h2>How this decision is modeled</h2><ul class="list">${notes}<li>Both options start from the same snapshot. Year 1 is Nov 2026–Oct 2027.</li></ul><div class="row" style="margin-top:12px"><button class="btn primary" id="cmpCsv">Export comparison CSV</button></div></article>`;
+  $('#cmpCsv').onclick=exportCompareCsv;
+}
+function exportCompareCsv(){const{sims,built}=dres,[A,B]=built.options,h=['Year','Age',A.name+' net worth',B.name+' net worth',A.name+' cash',B.name+' cash',A.name+' taxable',B.name+' taxable',A.name+' retirement accts',B.name+' retirement accts'];
+  const r=sims[0].rows.map((x,i)=>{const y=sims[1].rows[i];return[2026+x.t,x.age,x.nw,y.nw,x.cash,y.cash,x.taxable+x.sleeve,y.taxable+y.sleeve,x.retirement,y.retirement].map(n=>typeof n==='number'?Math.round(n*100)/100:n)});
+  download('decision-comparison.csv',[h,...r].map(a=>a.map(c=>/[",]/.test(c)?'"'+String(c).replace(/"/g,'""')+'"':c).join(',')).join('\n'),'text/csv')}
+
+function reinhartExtras(ex,res){
+  const rows=res.built.extra.rows,s=dstate,at=y=>rows[Math.min(rows.length,y)-1],a10=at(10),initial=s.brokerStart;
+  ex.innerHTML=`<section class="kpis" style="margin:0"><div class="card"><div class="kpi-label">${a10.y}-year modeled advantage</div><div class="kpi-value ${cls(a10.diff)}">${sgn(a10.diff)}</div><span class="badge">Keep rental less sell/invest</span></div>
+  <div class="card"><div class="kpi-label">${a10.y}-year keep rental terminal value</div><div class="kpi-value">${money(a10.rentalTerminal)}</div><span class="badge">After modeled sale &amp; taxes</span></div>
+  <div class="card"><div class="kpi-label">${a10.y}-year sell &amp; invest terminal value</div><div class="kpi-value">${money(a10.investTerminal)}</div><span class="badge">After investment-gain tax</span></div>
+  <div class="card"><div class="kpi-label">${a10.y}-year keep rental annualized growth</div><div class="kpi-value">${initial>0&&a10.rentalTerminal>0?pct(100*((a10.rentalTerminal/initial)**(1/a10.y)-1)):'—'}</div><span class="badge">From sell-now proceeds · CAGR</span></div></section>
+  <div class="charts"><article class="panel chartbox"><h2>Projected terminal value</h2><div class="legend"><span><i class="dot" style="background:var(--green)"></i>Keep rental</span><span><i class="dot" style="background:var(--blue)"></i>Sell &amp; invest</span></div><canvas id="valueChart" aria-label="Terminal values by year"></canvas></article><article class="panel chartbox"><h2>Rental cash flow &amp; debt</h2><div class="legend"><span><i class="dot" style="background:var(--orange)"></i>Annual after-tax cash flow</span><span><i class="dot" style="background:var(--red)"></i>Rental mortgage balance</span></div><canvas id="cashChart" aria-label="Rental cash flow and mortgage balance"></canvas></article></div>
+  <article class="panel"><h2>Decision checkpoints</h2><div class="table-wrap"><table class="t"><thead><tr><th>Hold</th><th>Keep rental</th><th>Sell &amp; invest</th><th>Difference</th><th>Property value</th><th>Rental loan</th><th>New-home extra loan</th></tr></thead><tbody>${[3,5,10,20].filter(y=>y<=rows.length).map(y=>{const x=at(y);return`<tr><td>${y} years</td><td>${money(x.rentalTerminal)}</td><td>${money(x.investTerminal)}</td><td class="${cls(x.diff)}">${sgn(x.diff)}</td><td>${money(x.property)}</td><td>${money(x.reinhBal)}</td><td>${money(x.extraBal)}</td></tr>`}).join('')}</tbody></table></div><div class="row" style="margin-top:12px"><button class="btn primary" id="export">Export scenario CSV</button><button class="btn" id="cmpCsv">Export comparison CSV</button></div></article>
+  <div class="details"><article class="panel"><h2>Annual operating view <span class="badge">first 10 years</span></h2><div class="table-wrap"><table class="t small"><thead><tr><th>Yr</th><th>Gross rent</th><th>Operating costs</th><th>R'ht P&amp;I</th><th>Extra-home P&amp;I</th><th>Tax</th><th>Repair</th><th>Net cash flow</th></tr></thead><tbody>${rows.slice(0,10).map(x=>`<tr><td>${x.y}</td><td>${money(x.gross)}</td><td>${money(x.op+x.res)}</td><td>${money(x.reinhPmt)}</td><td>${money(x.extraPmt)}</td><td>${money(x.incomeTax)}</td><td>${money(x.repair)}</td><td class="${cls(x.net)}">${money(x.net)}</td></tr>`).join('')}</tbody></table></div></article>
+  <article class="panel"><h2>Model notes</h2><ul class="list"><li>Default rent includes any pet rent; refundable deposits are excluded. Management cost is zero for self-management. The starting basis is the purchase price plus capital improvements.</li><li>Common new-home equity and debt cancel. The keep path pays and owes only the incremental loan; the snapshot already carries the new mortgage payment.</li><li>Default vacancy is 5% from the workbook. In reserve mode, vacancy uses part of the 10% allowance and the remainder funds replacements. The workbook preset uses separate actual maintenance and capital funding.</li><li>Household columns: the keep path runs rental after-tax cash flow through household cash and sells the rental at the end of the holding period; the sell path invests the net proceeds at the brokerage return, with gains taxed when retirement begins.</li><li>Replacements raise sale basis. Passive-loss releases, NIIT, mortgage-interest itemizing and partial-year depreciation are omitted. Verify with a tax preparer. <a href="https://www.irs.gov/publications/p523" style="color:var(--blue)">IRS home sale rules</a> · <a href="https://www.irs.gov/publications/p527" style="color:var(--blue)">IRS rental rules</a></li></ul></article></div>`;
+  $('#export').onclick=exportReinhartCsv;$('#cmpCsv').onclick=exportCompareCsv;
+}
+function exportReinhartCsv(){const h=['Year','Gross rent','Operating costs','Reserve','Major repairs','Reinhart P&I','Extra-home P&I','Income tax','Net cash flow','Reinhart loan','Extra-home loan','Property value','Rental terminal value','Sell invest terminal value','Difference'];
+  const rows=dres.built.extra.rows.map(x=>[x.y,x.gross,x.op,x.res,x.repair,x.reinhPmt,x.extraPmt,x.incomeTax,x.net,x.reinhBal,x.extraBal,x.property,x.rentalTerminal,x.investTerminal,x.diff]);
+  download('reinhart-rental-vs-sell-scenario.csv',[h,...rows].map(r=>r.join(',')).join('\n'),'text/csv')}
+
+/* ---------- Retirement ---------- */
+let retSel={decision:'__baseline',path:0},rcache=null;
+function retireSim(){
+  if(retSel.decision!=='__baseline'){const d=app.decisions.find(x=>x.id===retSel.decision);if(d){const r=runDecision(d,app.baseline),i=Math.min(retSel.path,r.sims.length-1);return{sim:r.sims[i],H:r.H,res:r,i}}}
+  return{sim:simulate(app.baseline,null),H:20,res:null,i:0};
+}
+function viewRetirement(){
+  $('#view').innerHTML=`<div class="row"><label>Show <select id="rDec"><option value="__baseline">Snapshot only (no decision)</option>${app.decisions.map(d=>`<option value="${d.id}" ${d.id===retSel.decision?'selected':''}>${esc(d.name)}</option>`).join('')}</select></label><label id="rPathLbl">Option <select id="rPath"></select></label><button class="btn primary" id="rCsv">Export projection CSV</button></div><div id="retBanner"></div><div id="retOut"></div>`;
+  $('#rDec').onchange=e=>{retSel.decision=e.target.value;retSel.path=0;retireOut()};$('#rPath').onchange=e=>{retSel.path=+e.target.value;retireOut()};$('#rCsv').onclick=exportRetireCsv;retireOut();
+}
+function retireOut(){
+  const r=retireSim(),sim=r.sim,v=sim.v,m=metrics(sim,r.H),dd=n=>(1+v.inflation/100)**n;
+  const sel=$('#rPath');if(r.res){sel.innerHTML=r.res.built.options.map((o,i)=>`<option value="${i}" ${i===r.i?'selected':''}>${esc(o.name)}</option>`).join('');$('#rPathLbl').hidden=false}else $('#rPathLbl').hidden=true;
+  const ret=sim.rows.filter(x=>x.phase==='retired');rcache={sim};
+  {const dd0=r.res?app.decisions.find(x=>x.id===retSel.decision):null,B0=dd0?decisionBaseline(dd0,app.baseline):app.baseline;$('#retBanner').innerHTML=bannerHTML(healthCheck(B0,[{name:r.res?r.res.built.options[r.i].name:'',sim}]))}
+  const accessNote=`Spending is drawn from cash, then taxable accounts (${v.gainShare}% of each withdrawal taxed as gain at ${v.gainTax}%), then retirement accounts (taxed at ${v.ordTax}%${v.retireAge<v.accessAge?`, plus a ${v.earlyPenalty}% penalty before age ${v.accessAge}`:''}). Social Security is ${v.ssTaxable}% taxable at the same rate. Home equity is never drawn. Spending targets are after income tax, so withdrawals are grossed up.`;
+  $('#retOut').innerHTML=`<div class="notice">${esc(accessNote)} Change any of these on the Snapshot tab: ${tryLinks(HELP.run)}.</div>
+  <section class="kpis"><div class="card"><div class="kpi-label">Funding gap before Social Security (age ${v.retireAge}–${v.ssAge-1}, today’s $)</div><div class="kpi-value">${money(m.gapReal)}</div><span class="badge">${money(m.gapFirstYearReal)}/yr · ${m.gapYears} yrs</span></div>
+  <div class="card"><div class="kpi-label">Accessible at ${v.retireAge} (cash + taxable)</div><div class="kpi-value">${money(m.accessibleAtRetire)}</div><span class="badge">Retirement accounts ${money(m.retirementAtRetire)}</span></div>
+  <div class="card"><div class="kpi-label">Funding outcome through age ${v.horizonAge}</div><div class="kpi-value ${m.depletionAge?'neg':'pos'}">${m.depletionAge?'Runs out at '+m.depletionAge:'Fully funded'}</div>${m.depletionAge?`<div class="hint">Adjust: ${tryLinks(HELP.run)}</div>`:''}<span class="badge">Liquid at ${v.horizonAge}: ${money(m.liquidEnd)} nominal</span></div>
+  <div class="card"><div class="kpi-label">Home &amp; other equity at ${v.retireAge} (not drawn)</div><div class="kpi-value">${money(m.homeAtRetire)}</div><span class="badge">Nominal</span></div></section>
+  <div class="charts"><article class="panel chartbox"><h2>Assets by account type <span class="badge">today’s dollars</span></h2><div class="legend"><span><i class="dot" style="background:var(--orange)"></i>Cash</span><span><i class="dot" style="background:var(--blue)"></i>Taxable</span><span><i class="dot" style="background:var(--green)"></i>Retirement</span><span><i class="dot" style="background:var(--purple)"></i>Home &amp; other equity</span></div><canvas id="stackChart" aria-label="Stacked assets by account type"></canvas></article>
+  <article class="panel chartbox"><h2>Spending vs. income <span class="badge">today’s dollars</span></h2><div class="legend"><span><i class="dot" style="background:var(--red)"></i>Spending target</span><span><i class="dot" style="background:var(--green)"></i>Social Security + other income</span><span><i class="dot" style="background:var(--orange)"></i>Withdrawals incl. tax</span></div><canvas id="flowChart" aria-label="Retirement spending and income"></canvas></article></div>
+  <div class="charts" style="margin-top:16px">${(()=>{const dv=r=>[{label:'Cash',value:r.cash/dd(r.t),color:'#ffb55c'},{label:'Taxable',value:(r.taxable+r.sleeve)/dd(r.t),color:'#54a8ff'},{label:'Retirement accounts',value:r.retirement/dd(r.t),color:'#4dd4a3'},{label:'Home & other equity',value:(r.newHome+r.rentalEq)/dd(r.t),color:'#b78cff'}],a=sim.rows.find(r=>r.age===v.retireAge)||sim.rows[0],b=sim.rows[sim.rows.length-1];rcache.dn=[['dnRet',dv(a)],['dnEnd',dv(b)]];return donutPanel('dnRet','Assets at '+a.age,'today’s dollars',dv(a),{small:'total assets'},'Cash and taxable are accessible before 59½; retirement accounts carry tax and an early-withdrawal penalty.')+donutPanel('dnEnd','Assets at '+b.age,'today’s dollars',dv(b),{small:'total assets'},'Home equity is never drawn in this model.')})()}</div>
+  <article class="panel" style="margin-top:16px"><h2>Year by year <span class="badge">today’s dollars</span></h2><div class="table-wrap"><table class="t small"><thead><tr><th>Age</th><th>Spending</th><th>Soc. Sec.</th><th>Other income</th><th>Gap</th><th>From cash</th><th>From taxable</th><th>From retirement</th><th>Taxes + penalty</th><th>Unfunded</th><th>Cash</th><th>Taxable</th><th>Retirement</th><th>Home &amp; other</th></tr></thead><tbody>${ret.map(x=>`<tr><td>${x.age-1}</td><td>${money(x.need/x.real)}</td><td>${money(x.ss/x.real)}</td><td>${money(x.decNet/x.real)}</td><td class="${x.age-1<v.ssAge?'neg':''}">${money(Math.max(0,x.need-x.ss-x.decNet)/x.real)}</td><td>${money(x.wCash/x.real)}</td><td>${money(x.wTaxable/x.real)}</td><td>${money(x.wRetire/x.real)}</td><td>${money(x.taxes/x.real)}</td><td class="${x.unfunded>1?'neg':''}">${money(x.unfunded/x.real)}</td><td>${money(x.cash/dd(x.t))}</td><td>${money((x.taxable+x.sleeve)/dd(x.t))}</td><td>${money(x.retirement/dd(x.t))}</td><td>${money((x.newHome+x.rentalEq)/dd(x.t))}</td></tr>`).join('')}</tbody></table></div><p class="foot">Each row shows the age at the start of the year; balances are year-end.</p></article>`;
+  drawRetireCharts();
+}
+function drawRetireCharts(){if(!rcache||!$('#stackChart'))return;(rcache.dn||[]).forEach(([id,sl])=>drawDonut(id,sl));const{sim}=rcache,v=sim.v,rows=sim.rows,d=r=>(1+v.inflation/100)**r.t,lab=rows.map(r=>'Age '+r.age);const ages=[{age:v.retireAge,label:'Retire '+v.retireAge},{age:60,label:'59½'},{age:v.ssAge,label:'Soc. Sec. '+v.ssAge}].filter((a,i,arr)=>!(i===1&&(a.age===arr[0].age||a.age===arr[2].age)));
+  drawStack('stackChart',[{values:rows.map(r=>r.cash/d(r))},{values:rows.map(r=>(r.taxable+r.sleeve)/d(r))},{values:rows.map(r=>r.retirement/d(r))},{values:rows.map(r=>(r.newHome+r.rentalEq)/d(r))}],['#ffb55c','#54a8ff','#4dd4a3','#b78cff'],kfmt,lab,{names:['Cash','Taxable','Retirement','Home & other equity'],vlines:ages});
+  const ret=rows.filter(r=>r.phase==='retired');if(!ret.length){const{ctx}=setupCanvas($('#flowChart'));ctx.fillStyle='#9db0c8';ctx.fillText('No retirement years within horizon.',10,20);return}
+  drawLines('flowChart',[{values:ret.map(r=>r.need/r.real)},{values:ret.map(r=>(r.ss+r.decNet)/r.real)},{values:ret.map(r=>(r.wCash+r.wTaxable+r.wRetire)/r.real)}],['#ff7892','#4dd4a3','#ffb55c'],kfmt,ret.map(r=>'Age '+(r.age-1)),{names:['Spending target','Soc. Sec. + other income','Withdrawals incl. tax'],vlines:[{age:v.ssAge,label:'Soc. Sec. '+v.ssAge}],shade:[{fromAge:v.retireAge,toAge:v.ssAge-1,label:'Funding gap before Social Security'}]})}
+function exportRetireCsv(){const{sim}=rcache,rows=sim.rows,h=['Year','Age (end)','Phase','Income (nominal)','Spending (nominal)','Contributions','Decision cash flow','One-time cash','Withdraw cash','Withdraw taxable','Withdraw retirement','Taxes+penalty','Unfunded','Cash','Taxable','Invested lump','Retirement accounts','New-home equity','Other equity','Net worth','Net worth (today $)'];
+  const body=rows.map(r=>[2026+r.t,r.age,r.phase,r.income||0,r.spending||0,r.contributions||0,r.decNet||0,r.lump||0,r.wCash||0,r.wTaxable||0,r.wRetire||0,r.taxes||0,r.unfunded||0,r.cash,r.taxable,r.sleeve,r.retirement,r.newHome,r.rentalEq,r.nw,r.nw/(1+sim.v.inflation/100)**r.t].map(x=>typeof x==='number'?Math.round(x*100)/100:x));
+  download('retirement-timeline.csv',[h,...body].map(r=>r.join(',')).join('\n'),'text/csv')}
+
+/* ---------- Backup ---------- */
+function viewBackup(){
+  $('#view').innerHTML=`<article class="panel"><h2>Storage &amp; backup</h2><p>${esc(saveText())}</p><ul class="list"><li>Your snapshot and every decision save automatically in this browser, including when this page is opened as a local file.</li><li>Browser storage can be cleared or blocked, so export a <strong>JSON backup</strong> now and then. It holds the snapshot, every decision, its overrides and its saved snapshot.</li><li>CSV exports are for spreadsheets and can’t be restored.</li></ul>
+  <div class="row"><button class="btn primary" id="bExp">Export backup</button><button class="btn" id="bImp">Import backup…</button><button class="btn danger" id="bClear">Clear saved data</button></div>
+  <h3>Cloud sync</h3><div id="ghPanel"></div><h3>Or paste backup JSON</h3><textarea id="paste" rows="5" style="width:100%;background:#091526;color:var(--text);border:1px solid #36516f;border-radius:6px;padding:8px;font:12px ui-monospace,monospace"></textarea><div class="row" style="margin-top:8px"><button class="btn" id="bPaste">Restore from pasted JSON</button></div></article>`;
+  if(window.cloud)window.cloud.render();$('#bExp').onclick=exportBackup;$('#bImp').onclick=()=>$('#fileImport').click();$('#bPaste').onclick=()=>importBackupText($('#paste').value);
+  $('#bClear').onclick=()=>{if(confirm('Delete saved data from this browser and reset the planner? Export a backup first.')){try{localStorage.removeItem(STORE_KEY)}catch(e){}app.baseline=defaultBaseline();const d=newDecision(app.baseline,'reinhart','Rental vs. sell');app.decisions=[d];app.activeId=d.id;persist();setTab('snapshot')}};
+}
+
+loadStore();showStorage();setTab('snapshot');
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script id="cloud">
+/* ===== Supabase sync (project "ledger"). Sign in with email + password; only allowlisted emails can read/write.
+   The anon key is public by design — access is enforced by row-level security (see supabase.sql). ===== */
+const SUPABASE_URL='https://jyhtlbpkraaytogrrcbs.supabase.co',SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5aHRsYnBrcmFheXRvZ3JyY2JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4OTE0MTgsImV4cCI6MjEwOTQ2NzQxOH0.7PvwDdSr-mgSTLsFKR3vTlSLYucQnXN505RbRNEIsZo';
+window.cloud=(function(){
+  if(!window.supabase)return null;
+  const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,detectSessionInUrl:false}});
+  const st=$('#cloudStatus'),btn=$('#btnCloud');let user=null,remoteStamp=null,timer=null,busy=false;
+  const say=t=>{st.hidden=!t;st.textContent=t||''};
+  btn.hidden=false;
+  async function pullOverlay(){ // private labels/defaults live in the 'defaults' row; fetched only when signed in
+    const {data}=await sb.from('planner_state').select('data').eq('id','defaults').maybeSingle();
+    if(!data)return;
+    const txt=JSON.stringify(data.data);let old=null;try{old=localStorage.getItem('plannerOverlay')}catch(e){}
+    if(txt===old)return;
+    applyOverlay(data.data);try{localStorage.setItem('plannerOverlay',txt)}catch(e){}
+    if(lastSaved==null){app.baseline=defaultBaseline();const d=newDecision(app.baseline,'reinhart','Rental vs. sell');app.decisions=[d];app.activeId=d.id} // nothing saved locally yet: start from the real defaults
+    setTab(app.tab);
+  }
+  async function pull(){
+    await pullOverlay();
+    const {data,error}=await sb.from('planner_state').select('data,updated_at').eq('id','household').maybeSingle();
+    if(error){say('Cloud error: '+error.message);return}
+    if(!data){await push(true);return}
+    remoteStamp=data.updated_at;
+    let p;try{p=parseBackup(JSON.stringify(data.data))}catch(e){say('Cloud data unreadable: '+e.message);return}
+    const same=JSON.stringify(data.data.baseline)===JSON.stringify(app.baseline)&&JSON.stringify(data.data.decisions)===JSON.stringify(app.decisions);
+    if(same){say('Synced '+new Date(remoteStamp).toLocaleTimeString());return}
+    if(confirm('Cloud copy (saved '+new Date(remoteStamp).toLocaleString()+') differs from this browser.\nOK = load the cloud copy here.\nCancel = keep this browser\'s data and overwrite the cloud.')){
+      app.baseline=p.baseline;app.decisions=p.decisions;app.activeId=p.activeId;
+      try{localStorage.setItem(STORE_KEY,makeBackup(app))}catch(e){}
+      setTab(app.tab);say('Loaded cloud copy')}
+    else await push(true);
+  }
+  async function push(force){
+    if(!user||busy)return;busy=true;
+    try{
+      if(!force&&remoteStamp){ // detect edits made elsewhere since our last pull
+        const {data}=await sb.from('planner_state').select('updated_at').eq('id','household').maybeSingle();
+        if(data&&data.updated_at!==remoteStamp){say('Cloud changed elsewhere — click “Sync now” to reconcile');busy=false;return}
+      }
+      const {data,error}=await sb.from('planner_state').upsert({id:'household',data:JSON.parse(makeBackup(app))}).select('updated_at').single();
+      if(error)say('Cloud error: '+error.message);else{remoteStamp=data.updated_at;say('Synced '+new Date(remoteStamp).toLocaleTimeString())}
+    }catch(e){say('Cloud offline — saved locally')}
+    busy=false;
+  }
+  function refreshUI(){btn.textContent=user?'Sign out ('+user.email+')':'Sign in to sync';
+    const p=$('#ghPanel');if(p){p.innerHTML=user?`<p>Signed in as <strong>${esc(user.email)}</strong>. Changes sync to the cloud a moment after you edit.</p><div class="row"><button class="btn" id="cloudNow">Sync now</button><button class="btn" id="cloudOut">Sign out</button></div>`:`<p>Sign in with your email and password to sync across devices.</p><div class="row"><button class="btn primary" id="cloudIn">Sign in…</button></div>`;
+      const a=$('#cloudNow'),b=$('#cloudOut'),c=$('#cloudIn');if(a)a.onclick=pull;if(b)b.onclick=()=>sb.auth.signOut();if(c)c.onclick=signIn}}
+  function setUser(u){user=u;refreshUI();if(u)pull();else say('')}
+  async function signIn(){
+    const email=(prompt('Email:')||'').trim().toLowerCase();if(!email)return;
+    const password=prompt('Password:')||'';if(!password){say('Sign-in cancelled');return}
+    const r=await sb.auth.signInWithPassword({email,password});
+    say(r.error?'Sign-in error: '+r.error.message:'');
+  }
+  btn.onclick=async()=>{if(user)await sb.auth.signOut();else signIn()};
+  sb.auth.onAuthStateChange((_e,s)=>{if(_e==='SIGNED_OUT'){try{localStorage.removeItem('plannerOverlay')}catch(e){}}setUser(s&&s.user||null)});
+  return {push:()=>{if(!user)return;clearTimeout(timer);timer=setTimeout(()=>push(false),1500)},render:refreshUI};
+})();
+</script>
+</body></html>
