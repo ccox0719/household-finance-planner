@@ -50,7 +50,7 @@ const pmt=(balance,annualRate,termYears)=>{if(!balance)return 0;const r=annualRa
 function amort(balance,rate,payment,months){let interest=0,paid=0;for(let i=0;i<months&&balance>1e-7;i++){const due=balance*rate/1200,actual=Math.min(payment,balance+due);interest+=Math.min(due,actual);paid+=actual;balance+=due-actual}return{balance:Math.max(0,balance),interest,paid}}
 function mortgageBalance(principal,ratePct,termYears,months){const p=pmt(principal,ratePct,termYears),r=ratePct/1200;if(!principal)return 0;if(!r)return Math.max(0,principal-p*months);return Math.max(0,principal*Math.pow(1+r,months)-p*(Math.pow(1+r,months)-1)/r)}
 
-/* ----- Reinhart rental-vs-sell projection (math carried over unchanged from the standalone calculator) ----- */
+/* ----- Rental-vs-sell projection (math carried over unchanged from the standalone calculator) ----- */
 const REINHART_DEFAULTS={years:20,value:300000,loan:100000,rate:4,payment:800,rent:2000,rentGrowth:2.5,tax:3000,insurance:1200,expenseInflation:2.5,reserve:10,reserveFundsRepairs:true,appreciation:3,basis:200000,depreciation:7000,sellCost:6,deadline:2029,exclusion:500000,brokerStart:100000,brokerReturn:5,fedOrd:25,stateOrd:3.8,gains:15,recapture:25,extraHomeLoan:100000,newRate:6.5,newTerm:30,roofCost:10000,roofYear:5,furnaceCost:6000,furnaceYear:8,vacancy:5,paidMaintenance:0,capitalFunding:2000,stateGain:3.8};
 const REINHART_WORKBOOK={rent:2000,tax:3000,depreciation:7000,appreciation:2.5,extraHomeLoan:100000,brokerStart:100000,brokerReturn:7,fedOrd:22,paidMaintenance:2000};
 function reinhartRows(s,workbookMode,years){
